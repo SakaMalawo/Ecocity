@@ -1,0 +1,196 @@
+@model EcoCity.Areas.Admin.Models.ViewModels.DashboardViewModel
+@{
+    ViewData["Title"] = "Tableau de bord";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Tableau de bord</h1>
+    </div>
+
+    <!-- Cartes de statistiques -->
+    <div class="row">
+        <!-- Utilisateurs -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Utilisateurs</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Initiatives -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Initiatives</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalInitiatives</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-lightbulb fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Catégories -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Catégories</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCategories</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-tags fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commentaires -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Commentaires</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalComments</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu -->
+    <div class="row">
+        <!-- Derniers utilisateurs -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Derniers utilisateurs inscrits</h6>
+                    <a asp-action="Users" class="btn btn-sm btn-primary">Voir tout</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nom</th>
+                                    <th>Email</th>
+                                    <th>Inscrit le</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model.RecentUsers)
+                                {
+                                    <tr>
+                                        <td>@user.FirstName @user.LastName</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                }
+                                @if (!Model.RecentUsers.Any())
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center">Aucun utilisateur trouvé</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dernières initiatives -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Dernières initiatives</h6>
+                    <a asp-controller="Initiative" asp-action="Index" class="btn btn-sm btn-primary">Voir tout</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Auteur</th>
+                                    <th>Date</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var initiative in Model.RecentInitiatives)
+                                {
+                                    <tr>
+                                        <td>@initiative.Title</td>
+                                        <td>@initiative.User?.FirstName @initiative.User?.LastName</td>
+                                        <td>@initiative.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        <td>
+                                            <span class="badge @GetStatusBadgeClass(initiative.Status)">@initiative.Status</span>
+                                        </td>
+                                    </tr>
+                                }
+                                @if (!Model.RecentInitiatives.Any())
+                                {
+                                    <tr>
+                                        <td colspan="4" class="text-center">Aucune initiative trouvée</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusBadgeClass(string status)
+    {
+        return status switch
+        {
+            "En attente" => "badge-warning",
+            "Approuvée" => "badge-success",
+            "En cours" => "badge-info",
+            "Terminée" => "badge-secondary",
+            "Rejetée" => "badge-danger",
+            _ => "badge-secondary"
+        };
+    }
+}
+
+@section Scripts {
+    <script>
+        // Scripts spécifiques à la page de tableau de bord
+        $(document).ready(function() {
+            // Initialisation des tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}

@@ -1,0 +1,180 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "EcoCity - Plateforme d'initiatives écologiques";
+}
+
+<!-- Messages d'alerte -->
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="container mt-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+}
+
+<!-- Section Héros -->
+<section class="hero-section bg-gradient-primary text-white py-5 mb-5 hero-slide">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 slide-in-left">
+                <h1 class="display-4 fw-bold mb-4">Bienvenue sur EcoCity</h1>
+                <p class="lead mb-4">La plateforme collaborative pour les initiatives écologiques citoyennes</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="@Url.Action("Create", "Initiative")" class="btn btn-light btn-lg btn-gradient">Proposer une initiative</a>
+                    <a href="#initiatives" class="btn btn-outline-light btn-lg">Découvrir</a>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="row text-center slide-in-right">
+                    <div class="col-6 col-md-3 mb-4">
+                        <div class="stat-item stat-card p-3 rounded">
+                            <h3 class="fw-bold text-white">@Model.TotalInitiatives</h3>
+                            <p class="text-white-50">Initiatives</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <div class="stat-item stat-card p-3 rounded">
+                            <h3 class="fw-bold text-white">@Model.TotalUsers</h3>
+                            <p class="text-white-50">Citoyens</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <div class="stat-item stat-card p-3 rounded">
+                            <h3 class="fw-bold text-white">@Model.TotalVotes</h3>
+                            <p class="text-white-50">Votes</p>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <div class="stat-item stat-card p-3 rounded">
+                            <h3 class="fw-bold text-white">@Model.TotalComments</h3>
+                            <p class="text-white-50">Commentaires</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Initiatives Récentes -->
+<section id="initiatives" class="py-5">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Initiatives Récentes</h2>
+                <p class="text-muted">Découvrez les dernières propositions écologiques</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            @if (Model.RecentInitiatives.Any())
+            {
+                @foreach (var initiative in Model.RecentInitiatives)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4 fade-in" style="animation-delay: @(Model.RecentInitiatives.IndexOf(initiative) * 0.1)s">
+                        <div class="card h-100 shadow-sm initiative-card">
+                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
+                            {
+                                <img src="@initiative.ImageUrl" class="card-img-top" alt="@initiative.Title" style="height: 200px; object-fit: cover;">
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-success mb-2">@initiative.Category?.Name</span>
+                                <h5 class="card-title">@initiative.Title</h5>
+                                <p class="card-text text-muted flex-grow-1">@(initiative.Description?.Length > 150 ? initiative.Description.Substring(0, 150) + "..." : initiative.Description)</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <small class="text-muted">
+                                        <i class="bi bi-person"></i> @initiative.User?.UserName
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar"></i> @initiative.CreatedAt.ToString("dd/MM/yyyy")
+                                    </small>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-primary btn-sm">Voir les détails</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <h4>Aucune initiative récente</h4>
+                        <p>Soyez le premier à proposer une initiative écologique !</p>
+                        <a href="@Url.Action("Create", "Initiative")" class="btn btn-primary">Créer une initiative</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Initiatives Populaires -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-12">
+                <h2 class="fw-bold mb-3">Initiatives Populaires</h2>
+                <p class="text-muted">Les initiatives les plus soutenues par la communauté</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            @if (Model.PopularInitiatives.Any())
+            {
+                @foreach (var initiative in Model.PopularInitiatives)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4 fade-in" style="animation-delay: @(Model.PopularInitiatives.IndexOf(initiative) * 0.1)s">
+                        <div class="card h-100 shadow-sm initiative-card">
+                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
+                            {
+                                <img src="@initiative.ImageUrl" class="card-img-top" alt="@initiative.Title" style="height: 200px; object-fit: cover;">
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-warning text-dark mb-2">@initiative.Category?.Name</span>
+                                <h5 class="card-title">@initiative.Title</h5>
+                                <p class="card-text text-muted flex-grow-1">@(initiative.Description?.Length > 150 ? initiative.Description.Substring(0, 150) + "..." : initiative.Description)</p>
+                                <div class="d-flex justify-content-between align-items-center mt-auto">
+                                    <small class="text-muted">
+                                        <i class="bi bi-person"></i> @initiative.User?.UserName
+                                    </small>
+                                    <div class="text-warning">
+                                        <i class="bi bi-star-fill"></i> @initiative.VotesCount votes
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-primary btn-sm">Voir les détails</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <h4>Aucune initiative populaire</h4>
+                        <p>Les initiatives populaires apparaîtront ici une fois que les citoyens commenceront à voter.</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

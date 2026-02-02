@@ -1,0 +1,146 @@
+@model EcoCity.ViewModels.InitiativeCreateViewModel
+@{
+    ViewData["Title"] = "Modifier l'initiative - EcoCity";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold">
+                            <i class="bi bi-pencil-fill text-primary me-2"></i>Modifier l'initiative
+                        </h2>
+                        <p class="text-muted">Mettez à jour les informations de votre initiative</p>
+                    </div>
+
+                    @if (ViewData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            @ViewData["ErrorMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label asp-for="Title" class="form-label fw-semibold">Titre de l'initiative</label>
+                                <input asp-for="Title" class="form-control" placeholder="Donnez un titre accrocheur à votre initiative" required />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="CategoryId" class="form-label fw-semibold">Catégorie</label>
+                                <select asp-for="CategoryId" class="form-select" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="4" placeholder="Décrivez votre initiative en détail" required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Location" class="form-label fw-semibold">Lieu</label>
+                            <input asp-for="Location" class="form-control" placeholder="Où se déroulera l'initiative ?" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="TargetDate" class="form-label fw-semibold">Date cible</label>
+                                <input asp-for="TargetDate" class="form-control" type="date" />
+                                <span asp-validation-for="TargetDate" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Status" class="form-label fw-semibold">Statut</label>
+                                <select asp-for="Status" class="form-select">
+                                    <option value="En attente">En attente</option>
+                                    <option value="Approuvée">Approuvée</option>
+                                    <option value="En cours">En cours</option>
+                                    <option value="Terminée">Terminée</option>
+                                    <option value="Rejetée">Rejetée</option>
+                                </select>
+                                <span asp-validation-for="Status" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Goals" class="form-label fw-semibold">Objectifs</label>
+                            <textarea asp-for="Goals" class="form-control" rows="3" placeholder="Quels sont les objectifs de cette initiative ?"></textarea>
+                            <span asp-validation-for="Goals" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="RequiredResources" class="form-label fw-semibold">Ressources requises</label>
+                            <textarea asp-for="RequiredResources" class="form-control" rows="3" placeholder="De quelles ressources avez-vous besoin ?"></textarea>
+                            <span asp-validation-for="RequiredResources" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Budget" class="form-label fw-semibold">Budget (€)</label>
+                                <input asp-for="Budget" class="form-control" type="number" min="0" step="0.01" placeholder="0.00" />
+                                <span asp-validation-for="Budget" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="Duration" class="form-label fw-semibold">Durée</label>
+                                <input asp-for="Duration" class="form-control" placeholder="Ex: 3 mois, 1 an" />
+                                <span asp-validation-for="Duration" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label asp-for="RequiredSkills" class="form-label fw-semibold">Compétences requises</label>
+                                <input asp-for="RequiredSkills" class="form-control" placeholder="Ex: Bricolage, Jardinage" />
+                                <span asp-validation-for="RequiredSkills" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="ImageFile" class="form-label fw-semibold">Image de l'initiative</label>
+                            <input type="file" name="ImageFile" class="form-control" accept="image/*" />
+                            <div class="form-text">Formats acceptés : JPG, PNG, GIF (max 5MB)</div>
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <div class="mt-2">
+                                    <small class="text-muted">Image actuelle :</small><br>
+                                    <img src="@Model.ImageUrl" alt="Image actuelle" style="max-width: 200px; max-height: 150px;" class="img-thumbnail" />
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Enregistrer les modifications
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

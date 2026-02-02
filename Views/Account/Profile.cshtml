@@ -1,0 +1,275 @@
+@model EcoCity.Models.AccountViewModels.ProfileViewModel
+@{
+    ViewData["Title"] = "Mon Profil - EcoCity";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-lg-4 mb-4">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" class="rounded-circle" alt="Profile" style="width: 150px; height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto" style="width: 150px; height: 150px;">
+                                <i class="bi bi-person-circle text-muted" style="font-size: 4rem;"></i>
+                            </div>
+                        }
+                    </div>
+                    <h4 class="fw-bold">@Model.Username</h4>
+                    <p class="text-muted">@Model.Email</p>
+                    
+                    @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                    {
+                        <p class="mt-2"><i class="bi bi-telephone me-2"></i>@Model.PhoneNumber</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.Address))
+                    {
+                        <p class="mt-2"><i class="bi bi-geo-alt me-2"></i>@Model.Address</p>
+                    }
+                    
+                    @if (!string.IsNullOrEmpty(Model.City))
+                    {
+                        <p class="mt-2"><i class="bi bi-building me-2"></i>@Model.City</p>
+                    }
+                    
+                    <div class="mt-4">
+                        <button class="btn btn-primary w-100 mb-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+                            <i class="bi bi-pencil-fill me-2"></i>Modifier le profil
+                        </button>
+                        <a href="@Url.Action("ChangePassword", "Account")" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-lock-fill me-2"></i>Changer le mot de passe
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="card border-0 shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold mb-3">Mes statistiques</h5>
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="text-primary fs-3 fw-bold">0</div>
+                            <small class="text-muted">Initiatives</small>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="text-success fs-3 fw-bold">0</div>
+                            <small class="text-muted">Votes</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-info fs-3 fw-bold">0</div>
+                            <small class="text-muted">Commentaires</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-warning fs-3 fw-bold">0</div>
+                            <small class="text-muted">Soutiens</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenu principal -->
+        <div class="col-lg-8">
+            <!-- Navigation par onglets -->
+            <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="initiatives-tab" data-bs-toggle="tab" data-bs-target="#initiatives" type="button" role="tab">
+                        <i class="bi bi-lightbulb-fill me-2"></i>Mes initiatives
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="votes-tab" data-bs-toggle="tab" data-bs-target="#votes" type="button" role="tab">
+                        <i class="bi bi-hand-thumbs-up-fill me-2"></i>Mes votes
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab">
+                        <i class="bi bi-bookmark-fill me-2"></i>Sauvegardées
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="activity-tab" data-bs-toggle="tab" data-bs-target="#activity" type="button" role="tab">
+                        <i class="bi bi-clock-history me-2"></i>Activité
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Contenu des onglets -->
+            <div class="tab-content" id="profileTabsContent">
+                <!-- Onglet Initiatives -->
+                <div class="tab-pane fade show active" id="initiatives" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="fw-bold mb-0">Mes initiatives proposées</h5>
+                                <a href="@Url.Action("Create", "Initiative")" class="btn btn-success">
+                                    <i class="bi bi-plus-circle-fill me-2"></i>Nouvelle initiative
+                                </a>
+                            </div>
+                            
+                            <div class="text-center py-5">
+                                <i class="bi bi-lightbulb text-muted" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Aucune initiative</h4>
+                                <p class="text-muted">Vous n'avez pas encore proposé d'initiative.</p>
+                                <a href="@Url.Action("Create", "Initiative")" class="btn btn-primary">
+                                    Proposer ma première initiative
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Votes -->
+                <div class="tab-pane fade" id="votes" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Initiatives que j'ai soutenues</h5>
+                            
+                            <div class="text-center py-5">
+                                <i class="bi bi-hand-thumbs-up text-muted" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Aucun vote</h4>
+                                <p class="text-muted">Vous n'avez pas encore voté pour d'initiatives.</p>
+                                <a href="@Url.Action("Index", "Initiative")" class="btn btn-primary">
+                                    Découvrir les initiatives
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Sauvegardées -->
+                <div class="tab-pane fade" id="saved" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Initiatives sauvegardées</h5>
+                            
+                            <div class="text-center py-5">
+                                <i class="bi bi-bookmark text-muted" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Aucune sauvegarde</h4>
+                                <p class="text-muted">Vous n'avez pas encore sauvegardé d'initiatives.</p>
+                                <a href="@Url.Action("Index", "Initiative")" class="btn btn-primary">
+                                    Parcourir les initiatives
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Onglet Activité -->
+                <div class="tab-pane fade" id="activity" role="tabpanel">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h5 class="fw-bold mb-4">Mon activité récente</h5>
+                            
+                            <div class="text-center py-5">
+                                <i class="bi bi-clock-history text-muted" style="font-size: 3rem;"></i>
+                                <h4 class="mt-3">Aucune activité</h4>
+                                <p class="text-muted">Votre activité apparaîtra ici.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'édition du profil -->
+<div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Modifier mon profil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editProfileForm">
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        <label for="userName" class="form-label">Nom d'utilisateur</label>
+                        <input type="text" class="form-control" id="userName" value="@Model.Username" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="@Model.Email" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="firstName" class="form-label">Prénom</label>
+                        <input type="text" class="form-control" id="firstName" value="@Model.FirstName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="lastName" value="@Model.LastName">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Téléphone</label>
+                        <input type="tel" class="form-control" id="phoneNumber" value="@Model.PhoneNumber">
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Adresse</label>
+                        <input type="text" class="form-control" id="address" value="@Model.Address">
+                    </div>
+                    <div class="mb-3">
+                        <label for="city" class="form-label">Ville</label>
+                        <input type="text" class="form-control" id="city" value="@Model.City">
+                    </div>
+                    <div class="mb-3">
+                        <label for="postalCode" class="form-label">Code postal</label>
+                        <input type="text" class="form-control" id="postalCode" value="@Model.PostalCode">
+                    </div>
+                    <div class="mb-3">
+                        <label for="profilePicture" class="form-label">Photo de profil</label>
+                        <input type="file" class="form-control" id="profilePicture" name="ProfileImage" accept="image/*">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-primary" onclick="updateProfile()">Enregistrer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateProfile() {
+            const form = document.getElementById('editProfileForm');
+            const formData = new FormData(form);
+            formData.append('Bio', document.getElementById('bio').value);
+            
+            const profilePicture = document.getElementById('profilePicture').files[0];
+            if (profilePicture) {
+                formData.append('ProfilePicture', profilePicture);
+            }
+
+            fetch('/Account/UpdateProfile', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de la mise à jour du profil');
+            });
+        }
+    </script>
+}

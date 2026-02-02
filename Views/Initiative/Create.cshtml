@@ -1,0 +1,199 @@
+@{
+    ViewData["Title"] = "Proposer une initiative - EcoCity";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-5 fw-bold mb-3">Proposer une Initiative</h1>
+                <p class="lead text-muted">Partagez vos idées pour un avenir plus durable</p>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5">
+                    <form method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-8 mb-4">
+                                <label for="Title" class="form-label fw-semibold">Titre de l'initiative *</label>
+                                <input type="text" class="form-control" id="Title" name="Title" required 
+                                       placeholder="Ex: Jardin communautaire du quartier" maxlength="200">
+                                <div class="form-text">Maximum 200 caractères</div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label for="CategoryId" class="form-label fw-semibold">Catégorie *</label>
+                                <select class="form-select" id="CategoryId" name="CategoryId" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                    @if (ViewBag.Categories != null)
+                                    {
+                                        @foreach (var category in ViewBag.Categories)
+                                        {
+                                            <option value="@category.Value">@category.Text</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Description" class="form-label fw-semibold">Description détaillée *</label>
+                            <textarea class="form-control" id="Description" name="Description" rows="6" required
+                                      placeholder="Décrivez votre initiative en déchantillon..."></textarea>
+                            <div class="form-text">Expliquez le problème, votre solution et les bénéfices attendus</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="Location" class="form-label fw-semibold">Lieu concerné</label>
+                                <input type="text" class="form-control" id="Location" name="Location" 
+                                       placeholder="Ex: Parc Montsouris, Paris 14ème">
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="TargetDate" class="form-label fw-semibold">Date cible</label>
+                                <input type="date" class="form-control" id="TargetDate" name="TargetDate">
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Image" class="form-label fw-semibold">Image (optionnel)</label>
+                            <input type="file" class="form-control" id="Image" name="Image" accept="image/*">
+                            <div class="form-text">Formats acceptés: JPG, PNG, GIF (Max 5MB)</div>
+                            <div id="imagePreview" class="mt-3"></div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Goals" class="form-label fw-semibold">Objectifs</label>
+                            <textarea class="form-control" id="Goals" name="Goals" rows="3"
+                                      placeholder="Quels sont les objectifs spécifiques de cette initiative ?"></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="RequiredResources" class="form-label fw-semibold">Ressources nécessaires</label>
+                            <textarea class="form-control" id="RequiredResources" name="RequiredResources" rows="3"
+                                      placeholder="De quelles ressources avez-vous besoin ? (bénévoles, matériel, financement...)"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label for="Budget" class="form-label fw-semibold">Budget estimé</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">€</span>
+                                    <input type="number" class="form-control" id="Budget" name="Budget" 
+                                           min="0" step="100" placeholder="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label for="Duration" class="form-label fw-semibold">Durée estimée</label>
+                                <select class="form-select" id="Duration" name="Duration">
+                                    <option value="">Sélectionner</option>
+                                    <option value="1">1 mois</option>
+                                    <option value="3">3 mois</option>
+                                    <option value="6">6 mois</option>
+                                    <option value="12">1 an</option>
+                                    <option value="24">2 ans</option>
+                                    <option value="permanent">Permanent</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">Compétences recherchées</label>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="jardinage" id="skill1" name="Skills">
+                                        <label class="form-check-label" for="skill1">Jardinage</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="communication" id="skill2" name="Skills">
+                                        <label class="form-check-label" for="skill2">Communication</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="design" id="skill3" name="Skills">
+                                        <label class="form-check-label" for="skill3">Design</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="evenementiel" id="skill4" name="Skills">
+                                        <label class="form-check-label" for="skill4">Événementiel</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="informatique" id="skill5" name="Skills">
+                                        <label class="form-check-label" for="skill5">Informatique</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="finance" id="skill6" name="Skills">
+                                        <label class="form-check-label" for="skill6">Finance</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            En soumettant cette initiative, vous vous engagez à la mener dans le respect des valeurs écologiques 
+                            et collaboratives d'EcoCity. Votre proposition sera examinée avant publication.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <a href="@Url.Action("Index", "Initiative")" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-send-fill me-2"></i>Soumettre l'initiative
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Preview image
+        document.getElementById('Image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('imagePreview');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div class="mt-3">
+                            <img src="${e.target.result}" class="img-thumbnail" style="max-height: 200px;" alt="Preview">
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-2" onclick="removeImage()">
+                                <i class="bi bi-trash"></i> Supprimer
+                            </button>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function removeImage() {
+            document.getElementById('Image').value = '';
+            document.getElementById('imagePreview').innerHTML = '';
+        }
+
+        // Character counter for title
+        document.getElementById('Title').addEventListener('input', function(e) {
+            const remaining = 200 - e.target.value.length;
+            const formText = e.target.nextElementSibling;
+            formText.textContent = `${remaining} caractères restants`;
+        });
+    </script>
+}

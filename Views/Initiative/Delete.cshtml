@@ -1,0 +1,61 @@
+@model EcoCity.Models.Initiative
+@{
+    ViewData["Title"] = "Supprimer l'initiative - EcoCity";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-danger">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Supprimer l'initiative
+                        </h2>
+                        <p class="text-muted">Êtes-vous sûr de vouloir supprimer cette initiative ?</p>
+                    </div>
+
+                    <div class="alert alert-warning" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Attention :</strong> Cette action est irréversible. Toutes les données associées à cette initiative seront définitivement supprimées.
+                    </div>
+
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="card-title">@Model.Title</h5>
+                            <p class="card-text">@Model.Description</p>
+                            <div class="row text-muted">
+                                <div class="col-6">
+                                    <small><i class="bi bi-person me-1"></i> @Model.User?.UserName</small>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <small><i class="bi bi-calendar me-1"></i> @Model.CreatedAt.ToString("dd/MM/yyyy")</small>
+                                </div>
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.Category?.Name))
+                            {
+                                <div class="mt-2">
+                                    <span class="badge bg-primary">@Model.Category.Name</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        
+                        <div class="d-flex gap-2 justify-content-center">
+                            <button type="submit" class="btn btn-danger btn-lg">
+                                <i class="bi bi-trash me-2"></i>Oui, supprimer
+                            </button>
+                            <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-x-circle me-2"></i>Non, annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

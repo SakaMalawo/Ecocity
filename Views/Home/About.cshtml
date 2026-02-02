@@ -1,0 +1,93 @@
+@{
+    ViewData["Title"] = "À propos - EcoCity";
+}
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-4">À propos d'EcoCity</h1>
+                <p class="lead text-muted">La plateforme qui connecte les citoyens pour un avenir plus durable</p>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                            </div>
+                            <h4 class="card-title">Communauté</h4>
+                            <p class="card-text">Rassemblons les citoyens engagés qui veulent faire une différence dans leur quartier et leur ville.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-lightbulb-fill text-warning" style="font-size: 3rem;"></i>
+                            </div>
+                            <h4 class="card-title">Innovation</h4>
+                            <p class="card-text">Encourageons les idées nouvelles et les solutions créatives pour les défis environnementaux locaux.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mb-5">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-arrow-repeat text-success" style="font-size: 3rem;"></i>
+                            </div>
+                            <h4 class="card-title">Action</h4>
+                            <p class="card-text">Transformons les idées en projets concrets avec le soutien de toute la communauté.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-award-fill text-info" style="font-size: 3rem;"></i>
+                            </div>
+                            <h4 class="card-title">Impact</h4>
+                            <p class="card-text">Mesurons nos progrès et célébrons ensemble chaque succès vers une ville plus verte.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-light p-5 rounded-3 text-center">
+                <h3 class="mb-4">Notre Mission</h3>
+                <p class="lead mb-4">
+                    Faciliter la collaboration citoyenne pour développer des initiatives écologiques locales,
+                    en créant un espace où chaque voix compte et chaque action contribue à un avenir durable.
+                </p>
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <h4 class="text-primary">🌱 Écologie</h4>
+                        <p>Promouvoir des pratiques respectueuses de l'environnement</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-success">🤝 Collaboration</h4>
+                        <p>Connecter les citoyens pour des projets communs</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h4 class="text-info">🏙️ Innovation Urbaine</h4>
+                        <p>Repenser notre ville pour un avenir durable</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <h4 class="mb-3">Rejoignez-nous dans cette aventure !</h4>
+                <p class="mb-4">Chaque petite action compte pour faire de notre ville un endroit meilleur.</p>
+                <a href="@Url.Action("Create", "Initiative")" class="btn btn-primary btn-lg me-3">Proposer une initiative</a>
+                <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg">Découvrir les projets</a>
+            </div>
+        </div>
+    </div>
+</div>
