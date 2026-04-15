@@ -33,16 +33,18 @@ public class HomeController : Controller
     {
         var model = new HomeViewModel
         {
-            // Récupérer les initiatives les plus récentes
+            // Récupérer les initiatives les plus récentes (uniquement les approuvées)
             RecentInitiatives = await _context.Initiatives
+                .Where(i => i.Status == "Approuvée")
                 .Include(i => i.User)
                 .Include(i => i.Category)
                 .OrderByDescending(i => i.CreatedAt)
                 .Take(6)
                 .ToListAsync(),
                 
-            // Récupérer les initiatives les plus populaires (celles avec le plus de votes)
+            // Récupérer les initiatives les plus populaires (celles avec le plus de votes, uniquement les approuvées)
             PopularInitiatives = await _context.Initiatives
+                .Where(i => i.Status == "Approuvée")
                 .Include(i => i.User)
                 .Include(i => i.Category)
                 .OrderByDescending(i => i.VotesCount)
@@ -57,6 +59,13 @@ public class HomeController : Controller
         };
 
         return View(model);
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult AdminAccess()
+    {
+        return View();
     }
 
     [Authorize]

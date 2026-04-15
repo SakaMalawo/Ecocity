@@ -1,5 +1,6 @@
 using EcoCity.Data;
 using EcoCity.Models;
+using EcoCity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -64,6 +65,10 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("RequireUserRole", policy => policy.RequireRole("User"));
 });
 
+// Configuration des services personnalisés
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
+
 // Configuration de Swagger pour la documentation de l'API
 builder.Services.AddSwaggerGen();
 
@@ -123,7 +128,7 @@ using (var scope = app.Services.CreateScope())
         // Initialiser les rôles et l'utilisateur admin
         try
         {
-            await ApplicationDbInitializer.InitializeAsync(userManager, roleManager);
+            await ApplicationDbInitializer.InitializeAsync(userManager, roleManager, services);
         }
         catch (Exception ex)
         {

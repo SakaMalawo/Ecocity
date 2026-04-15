@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using EcoCity.Models;
 using EcoCity.Models.AccountViewModels;
+using EcoCity.ViewModels;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using System.Text;
 using System.Text.Encodings.Web;
@@ -71,6 +72,12 @@ namespace EcoCity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
+            // Nettoyer le returnUrl pour éviter les redirections vers l'admin
+            if (!string.IsNullOrEmpty(returnUrl) && returnUrl.Contains("/admin/"))
+            {
+                returnUrl = null;
+            }
+
             ViewData["ReturnUrl"] = returnUrl;
             
             if (ModelState.IsValid)
@@ -100,7 +107,8 @@ namespace EcoCity.Controllers
                     if (result.Succeeded)
                     {
                         TempData["SuccessMessage"] = "Connexion réussie ! Bienvenue sur EcoCity.";
-                        return RedirectToLocal(returnUrl);
+                        // Forcer la redirection vers l'accueil principal pour éviter les conflits admin
+                        return RedirectToAction("Index", "Home", new { area = "" });
                     }
                     
                     if (result.IsLockedOut)
@@ -384,7 +392,8 @@ namespace EcoCity.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("L'utilisateur s'est déconnecté.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            // Forcer la redirection vers l'accueil principal pour éviter les conflits admin
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         [HttpPost]
@@ -393,7 +402,8 @@ namespace EcoCity.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("L'utilisateur s'est déconnecté.");
-            return RedirectToAction(nameof(HomeController.Index), "Home");
+            // Forcer la redirection vers l'accueil principal pour éviter les conflits admin
+            return RedirectToAction("Index", "Home", new { area = "" });
         }
 
         [HttpPost]
@@ -502,7 +512,7 @@ namespace EcoCity.Controllers
         {
             if (userId == null || code == null)
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -774,7 +784,7 @@ namespace EcoCity.Controllers
             }
             else
             {
-                return RedirectToAction(nameof(HomeController.Index), "Home");
+                return RedirectToAction("Index", "Home", new { area = "" });
             }
         }
 

@@ -1,0 +1,406 @@
+@model EcoCity.ViewModels.MemberDashboardViewModel
+@{
+    ViewData["Title"] = "Tableau de bord - Espace Membre";
+    
+    string GetStatusIcon(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+        return status[0] switch
+        {
+            'E' => "bi-clock-history",
+            'A' => "bi-check-circle", 
+            'R' => "bi-x-circle",
+            _ => ""
+        };
+    }
+    
+    string GetStatusText(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+        return status[0] switch
+        {
+            'E' => "En attente",
+            'A' => "Approuvée",
+            'R' => "Rejetée",
+            _ => status
+        };
+    }
+}
+
+<div class="container py-5">
+    <!-- Header du tableau de bord -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-4 mb-4">
+                <div class="d-flex align-items-center">
+                    <div class="user-avatar-lg me-3">
+                        @if (!string.IsNullOrEmpty(Model.User.ProfileImageUrl))
+                        {
+                            <img src="@Model.User.ProfileImageUrl" alt="Avatar" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="https://picsum.photos/seed/@Model.User.UserName/60/60.jpg" alt="Avatar" class="rounded-circle" style="width: 60px; height: 60px; object-fit: cover;">
+                        }
+                    </div>
+                    <div class="flex-grow-1">
+                        <h2 class="text-white fw-bold mb-1">Bienvenue, @Model.User.FirstName @Model.User.LastName !</h2>
+                        <p class="text-white-50 mb-0">Gérez votre espace personnel et suivez vos initiatives</p>
+                    </div>
+                    <div class="text-end">
+                        <a href="@Url.Action("Settings", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                            <i class="bi bi-gear me-1"></i> Paramètres
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="glass-card p-4 text-center">
+                <h3 class="text-white fw-bold mb-2">@Model.TotalInitiatives</h3>
+                <p class="text-white-50 mb-0">Initiatives créées</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card p-4 text-center">
+                <h3 class="text-white fw-bold mb-2">@Model.TotalSupported</h3>
+                <p class="text-white-50 mb-0">Initiatives soutenues</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card p-4 text-center">
+                <h3 class="text-white fw-bold mb-2">@Model.TotalComments</h3>
+                <p class="text-white-50 mb-0">Commentaires</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="glass-card p-4 text-center">
+                <h3 class="text-white fw-bold mb-2">@Model.UnreadMessages</h3>
+                <p class="text-white-50 mb-0">Messages non lus</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation rapide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-3">
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Dashboard", "Member", new { area = "" })" class="btn btn-glass btn-sm active">
+                        <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
+                    </a>
+                    <a href="@Url.Action("MyInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-lightbulb me-1"></i> Mes initiatives
+                    </a>
+                    <a href="@Url.Action("SupportedInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-heart me-1"></i> Initiatives soutenues
+                    </a>
+                    <a href="@Url.Action("Messages", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-envelope me-1"></i> Messages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sections principales -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Initiatives récentes -->
+            <div class="glass-card p-4 mb-4">
+                <h3 class="text-white fw-bold mb-3">
+                    <i class="bi bi-clock-history me-2"></i> Vos initiatives récentes
+                </h3>
+                @if (Model.RecentInitiatives.Any())
+                {
+                    @foreach (var initiative in Model.RecentInitiatives)
+                    {
+                        <div class="initiative-post mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="user-avatar me-3">
+                                    <img src="https://picsum.photos/seed/@(initiative.User?.UserName ?? "user")/40/40.jpg" 
+                                         alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="text-white fw-bold mb-1">
+                                        <a href="@Url.Action("Details", "Initiative", new { area = "", id = initiative.Id })" class="text-white text-decoration-none">
+                                            @initiative.Title
+                                        </a>
+                                    </h6>
+                                    <div class="d-flex align-items-center text-white-50 small">
+                                        <span class="category-pill me-2">@initiative.Category?.Name</span>
+                                        <span class="status-badge me-2" data-status="@initiative.Status">
+                                            <i class="bi @GetStatusIcon(initiative.Status) me-1"></i>@GetStatusText(initiative.Status)
+                                        </span>
+                                        <span><i class="bi bi-calendar me-1"></i>@initiative.CreatedAt.ToString("dd MMM yyyy")</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">@initiative.VotesCount votes</span>
+                                </div>
+                            </div>
+                            <p class="text-white-50 small mb-2">
+                                @(initiative.Description?.Length > 100 ? initiative.Description.Substring(0, 100) + "..." : initiative.Description)
+                            </p>
+                            <div class="d-flex gap-2">
+                                <a href="@Url.Action("Edit", "Initiative", new { area = "", id = initiative.Id })" class="btn btn-glass btn-sm">
+                                    <i class="bi bi-pencil me-1"></i> Modifier
+                                </a>
+                                <a href="@Url.Action("Delete", "Initiative", new { area = "", id = initiative.Id })" class="btn btn-glass btn-sm">
+                                    <i class="bi bi-trash me-1"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-white-50">Vous n'avez pas encore créé d'initiative.</p>
+                        <a href="@Url.Action("Create", "Initiative", new { area = "" })" class="btn btn-glass-eco">
+                            <i class="bi bi-plus-circle me-1"></i> Créer votre première initiative
+                        </a>
+                    </div>
+                }
+            </div>
+
+            <!-- Initiatives soutenues -->
+            <div class="glass-card p-4">
+                <h3 class="text-white fw-bold mb-3">
+                    <i class="bi bi-heart-fill me-2"></i> Initiatives que vous soutenez
+                </h3>
+                @if (Model.SupportedInitiatives.Any())
+                {
+                    @foreach (var initiative in Model.SupportedInitiatives)
+                    {
+                        <div class="initiative-post mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="user-avatar me-3">
+                                    <img src="https://picsum.photos/seed/@(initiative.User?.UserName ?? "user")/40/40.jpg" 
+                                         alt="Avatar" class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="text-white fw-bold mb-1">
+                                        <a href="@Url.Action("Details", "Initiative", new { area = "", id = initiative.Id })" class="text-white text-decoration-none">
+                                            @initiative.Title
+                                        </a>
+                                    </h6>
+                                    <div class="d-flex align-items-center text-white-50 small">
+                                        <span class="category-pill me-2">@initiative.Category?.Name</span>
+                                        <span><i class="bi bi-person-check me-1"></i> @initiative.User?.UserName</span>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-eco">@initiative.VotesCount votes</span>
+                                </div>
+                            </div>
+                            <p class="text-white-50 small mb-2">
+                                @(initiative.Description?.Length > 100 ? initiative.Description.Substring(0, 100) + "..." : initiative.Description)
+                            </p>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-glass btn-sm" onclick="unvoteInitiative(@initiative.Id)">
+                                    <i class="bi bi-heart me-1"></i> Retirer le soutien
+                                </button>
+                                <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-glass btn-sm">
+                                    <i class="bi bi-eye me-1"></i> Voir
+                                </a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center py-4">
+                        <p class="text-white-50">Vous ne soutenez aucune initiative pour le moment.</p>
+                        <a href="@Url.Action("Index", "Initiative", new { area = "" })" class="btn btn-glass">
+                            <i class="bi bi-search me-1"></i> Explorer les initiatives
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Infos du profil -->
+            <div class="glass-card p-4 mb-4">
+                <h4 class="text-white fw-bold mb-3">
+                    <i class="bi bi-person-circle me-2"></i> Mon profil
+                </h4>
+                <div class="text-center mb-3">
+                    @if (!string.IsNullOrEmpty(Model.User.ProfileImageUrl))
+                    {
+                        <img src="@Model.User.ProfileImageUrl" alt="Profile" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    }
+                    else
+                    {
+                        <img src="https://picsum.photos/seed/@Model.User.UserName/100/100.jpg" alt="Profile" class="rounded-circle mb-3" style="width: 100px; height: 100px; object-fit: cover;">
+                    }
+                </div>
+                <h5 class="text-white text-center mb-1">@Model.User.FirstName @Model.User.LastName</h5>
+                <p class="text-white-50 text-center mb-3">@Model.User.Email</p>
+                <p class="text-white-50 text-center mb-3">@Model.User.City, @Model.User.PostalCode</p>
+                <div class="text-center">
+                    <a href="@Url.Action("Profile", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-pencil me-1"></i> Modifier
+                    </a>
+                </div>
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="glass-card p-4 mb-4">
+                <h4 class="text-white fw-bold mb-3">
+                    <i class="bi bi-lightning me-2"></i> Actions rapides
+                </h4>
+                <div class="d-grid gap-2">
+                    <a href="@Url.Action("Create", "Initiative", new { area = "" })" class="btn btn-glass-eco btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Nouvelle initiative
+                    </a>
+                    <a href="@Url.Action("MyInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-list-check me-1"></i> Mes initiatives
+                    </a>
+                    <a href="@Url.Action("Settings", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-gear me-1"></i> Paramètres
+                    </a>
+                </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="glass-card p-4 mb-4">
+                <h4 class="text-white fw-bold mb-3">
+                    <i class="bi bi-bell me-2"></i> Notifications
+                </h4>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item glass-card p-2 mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle text-info me-2"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="text-white small mb-1">Nouveau message reçu</h6>
+                                <p class="text-white-50 small">De: admin</p>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-white-50">Il y a 2h</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item glass-card p-2 mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart-fill text-danger me-2"></i>
+                            <div class="flex-grow-1">
+                                <h6 class="text-white small mb-1">Votre initiative a reçu 10 votes</h6>
+                                <p class="text-white-50 small">Jardin communautaire</p>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-white-50">Hier</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <a href="@Url.Action("Notifications", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Voir toutes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistiques détaillées -->
+            <div class="glass-card p-4">
+                <h4 class="text-white fw-bold mb-3">
+                    <i class="bi bi-graph-up me-2"></i> Vos statistiques
+                </h4>
+                <div class="row text-center">
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <h5 class="text-white fw-bold">@Model.TotalInitiatives</h5>
+                            <p class="text-white-50">Total initiatives</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <h5 class="text-white fw-bold">@Model.TotalSupported</h5>
+                            <p class="text-white-50">Soutenues</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <h5 class="text-white fw-bold">@Model.TotalComments</h5>
+                            <p class="text-white-50">Commentaires</p>
+                        </div>
+                    </div>
+                    <div class="col-6 mb-3">
+                        <div class="stat-item">
+                            <h5 class="text-white fw-bold">@Model.SupportersCount</h5>
+                            <p class="text-white-50">Personnes aidées</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Statistics", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi-bar-chart me-1"></i> Voir les statistiques
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Fonction pour retirer le soutien
+    function unvoteInitiative(initiativeId) {
+        if (confirm('Êtes-vous sûr de vouloir retirer votre soutien à cette initiative ?')) {
+            fetch('/Initiative/Unvote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ initiativeId: initiativeId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Erreur lors du retrait du soutien.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue.');
+            });
+        }
+    }
+</script>
+
+<style>
+    .status-badge {
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.025em;
+    }
+    
+    .status-badge[data-status="En attente"] {
+        background-color: rgba(255, 193, 7, 0.2);
+        color: #ffc107;
+        border: 1px solid rgba(255, 193, 7, 0.3);
+    }
+    
+    .status-badge[data-status="Approuvée"] {
+        background-color: rgba(25, 135, 84, 0.2);
+        color: #198754;
+        border: 1px solid rgba(25, 135, 84, 0.3);
+    }
+    
+    .status-badge[data-status="Rejetée"] {
+        background-color: rgba(220, 53, 69, 0.2);
+        color: #dc3545;
+        border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+</style>

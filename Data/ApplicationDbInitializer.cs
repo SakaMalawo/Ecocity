@@ -1,12 +1,15 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using EcoCity.Models;
+using EcoCity.Services;
 
 namespace EcoCity.Data
 {
     public static class ApplicationDbInitializer
     {
         public static async Task InitializeAsync(UserManager<ApplicationUser> userManager, 
-                                              RoleManager<IdentityRole> roleManager)
+                                              RoleManager<IdentityRole> roleManager,
+                                              IServiceProvider serviceProvider)
         {
             string[] roleNames = { "Admin", "Moderator", "User" };
             
@@ -49,6 +52,10 @@ namespace EcoCity.Data
                 {
                     await userManager.AddToRoleAsync(adminUser, "Admin");
                     await userManager.AddToRoleAsync(adminUser, "Moderator");
+                    
+                    // Créer l'entrée dans la table Admin
+                    var adminService = serviceProvider.GetRequiredService<IAdminService>();
+                    await adminService.CreateAdminAsync(adminUser.Id, "Admin", "System");
                 }
             }
 

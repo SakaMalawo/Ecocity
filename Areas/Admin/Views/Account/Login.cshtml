@@ -1,0 +1,218 @@
+@model EcoCity.Models.AccountViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Connexion Admin - EcoCity";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .admin-login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .admin-logo {
+            width: 80px;
+            height: 80px;
+            background: var(--primary-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+            padding: 12px 15px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .btn-admin {
+            background: var(--primary-gradient);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .text-white-custom {
+            color: white !important;
+        }
+
+        .alert-custom {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 10px;
+        }
+
+        .validation-error {
+            color: #ff6b6b;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="row w-100">
+            <div class="col-lg-6 mx-auto">
+                <div class="glass-card p-5">
+                    <!-- Logo et titre -->
+                    <div class="text-center mb-4">
+                        <div class="admin-logo">
+                            <i class="bi bi-shield-lock"></i>
+                        </div>
+                        <h2 class="text-white-custom fw-bold mb-2">EcoCity Admin</h2>
+                        <p class="text-white-custom opacity-75">Connexion au panneau d'administration</p>
+                    </div>
+
+                    <!-- Messages d'erreur -->
+                    @if (ViewData["ErrorMessage"] != null)
+                    {
+                        <div class="alert alert-custom alert-danger mb-4">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            @ViewData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <!-- Formulaire de connexion -->
+                    <form method="post">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="mb-3">
+                            <label for="Email" class="form-label text-white-custom fw-semibold">Email</label>
+                            <input asp-for="Email" class="form-control" id="Email" placeholder="admin@ecocity.com" required>
+                            <span asp-validation-for="Email" class="validation-error"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="Password" class="form-label text-white-custom fw-semibold">Mot de passe</label>
+                            <div class="input-group">
+                                <input asp-for="Password" class="form-control" id="Password" type="password" placeholder="Votre mot de passe" required>
+                                <button class="btn btn-outline-light" type="button" onclick="togglePassword()">
+                                    <i class="bi bi-eye" id="passwordToggle"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="validation-error"></span>
+                        </div>
+
+                        <div class="mb-3 form-check">
+                            <input asp-for="RememberMe" class="form-check-input" id="RememberMe">
+                            <label class="form-check-label text-white-custom" for="RememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-admin btn-lg">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Se connecter
+                            </button>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="/" class="text-white-custom text-decoration-none opacity-75">
+                                <i class="bi bi-arrow-left me-2"></i>Retour au site
+                            </a>
+                        </div>
+                    </form>
+
+                    <!-- Informations de sécurité -->
+                    <div class="mt-4 pt-4 border-top border-white border-opacity-25">
+                        <div class="text-center">
+                            <small class="text-white-custom opacity-50">
+                                <i class="bi bi-shield-check me-1"></i>
+                                Connexion sécurisée réservée aux administrateurs
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById('Password');
+            const passwordToggle = document.getElementById('passwordToggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordToggle.className = 'bi bi-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                passwordToggle.className = 'bi bi-eye';
+            }
+        }
+
+        // Animation d'entrée
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.glass-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

@@ -17,6 +17,8 @@ namespace EcoCity.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Vote> Votes { get; set; }
         public DbSet<Log> Logs { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Admin> Admins { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

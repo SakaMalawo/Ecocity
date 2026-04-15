@@ -28,6 +28,14 @@ namespace EcoCity.Models
         
         public int VotesCount { get; set; } = 0;
         
+        // Champs pour le suivi d'approbation
+        public DateTime? UpdatedAt { get; set; }
+        
+        public string? ReviewedBy { get; set; }
+        
+        [StringLength(500)]
+        public string? RejectionReason { get; set; }
+        
         public string Goals { get; set; }
         
         public string RequiredResources { get; set; }

@@ -2,18 +2,19 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using EcoCity.Models;
 using EcoCity.Data;
+using EcoCity.Models;
+using EcoCity.ViewModels;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
-using System.Security.Claims;
-using EcoCity.ViewModels;
+using EcoCity.Services;
 
 namespace EcoCity.Controllers
 {
@@ -23,15 +24,18 @@ namespace EcoCity.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly INotificationService _notificationService;
 
         public InitiativeController(
             ApplicationDbContext context, 
             UserManager<ApplicationUser> userManager,
-            IWebHostEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnvironment,
+            INotificationService notificationService)
         {
             _context = context;
             _userManager = userManager;
             _hostingEnvironment = hostingEnvironment;
+            _notificationService = notificationService;
         }
 
         // GET: Initiative
@@ -46,6 +50,7 @@ namespace EcoCity.Controllers
             var initiatives = _context.Initiatives
                 .Include(i => i.User)
                 .Include(i => i.Category)
+                .Where(i => i.Status == "Approuvée")
                 .AsQueryable();
 
             // Filtrage
@@ -130,7 +135,7 @@ namespace EcoCity.Controllers
             await LoadCategories();
             
             // Debug: Vérifier si les catégories sont chargées
-            var categories = ViewBag.Categories as SelectList;
+            var categories = ViewBag.Categories as List<Category>;
             if (categories == null || !categories.Any())
             {
                 // Forcer la création des catégories si elles n'existent pas
@@ -168,9 +173,35 @@ namespace EcoCity.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(InitiativeCreateViewModel model)
         {
+            // Débogage: afficher les données reçues
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"Title: {model.Title}");
+            Console.WriteLine($"Description: {model.Description}");
+            Console.WriteLine($"CategoryId: {model.CategoryId}");
+            Console.WriteLine($"Location: {model.Location}");
+            Console.WriteLine($"TargetDate: {model.TargetDate}");
+            Console.WriteLine($"ImageFile: {model.ImageFile?.FileName}");
+
+            // Afficher les erreurs de validation
+            if (!ModelState.IsValid)
+            {
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Erreur: {error.ErrorMessage}");
+                    ModelState.AddModelError("", error.ErrorMessage);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    ModelState.AddModelError("", "Utilisateur non connecté.");
+                    await LoadCategories();
+                    return View(model);
+                }
+
                 var initiative = new Initiative
                 {
                     Title = model.Title,
@@ -180,34 +211,146 @@ namespace EcoCity.Controllers
                     CategoryId = model.CategoryId,
                     UserId = user.Id,
                     Status = "En attente",
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    Duration = model.Duration ?? "Non spécifiée",
+                    Goals = model.Goals ?? "",
+                    RequiredResources = model.RequiredResources ?? "",
+                    RequiredSkills = model.RequiredSkills ?? "",
+                    Budget = model.Budget,
+                    RejectionReason = null, // Explicitement null pour les nouvelles initiatives
+                    ReviewedBy = null,
+                    UpdatedAt = null
                 };
 
                 // Gestion du téléchargement d'image
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
-                    if (!Directory.Exists(uploadsFolder))
+                    try
                     {
-                        Directory.CreateDirectory(uploadsFolder);
+                        var uploadsFolder = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
+                        if (!Directory.Exists(uploadsFolder))
+                        {
+                            Directory.CreateDirectory(uploadsFolder);
+                        }
+
+                        // Validation du type de fichier
+                        var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                        var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLowerInvariant();
+                        
+                        if (!allowedExtensions.Contains(fileExtension))
+                        {
+                            ModelState.AddModelError("", "Seuls les fichiers JPG, PNG et GIF sont autorisés.");
+                            await LoadCategories();
+                            return View(model);
+                        }
+
+                        // Validation de la taille (max 5MB)
+                        if (model.ImageFile.Length > 5 * 1024 * 1024)
+                        {
+                            ModelState.AddModelError("", "La taille de l'image ne doit pas dépasser 5MB.");
+                            await LoadCategories();
+                            return View(model);
+                        }
+
+                        var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileNameWithoutExtension(model.ImageFile.FileName)}{fileExtension}";
+                        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await model.ImageFile.CopyToAsync(fileStream);
+                        }
+
+                        initiative.ImageUrl = $"/uploads/{uniqueFileName}";
+                        Console.WriteLine($"Image sauvegardée: {initiative.ImageUrl}");
                     }
-
-                    var uniqueFileName = $"{Guid.NewGuid()}_{model.ImageFile.FileName}";
-                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    catch (Exception ex)
                     {
-                        await model.ImageFile.CopyToAsync(fileStream);
+                        Console.WriteLine($"Erreur lors de la sauvegarde de l'image: {ex.Message}");
+                        ModelState.AddModelError("", "Erreur lors du téléchargement de l'image. Veuillez réessayer.");
+                        await LoadCategories();
+                        return View(model);
                     }
-
-                    initiative.ImageUrl = $"/uploads/{uniqueFileName}";
+                }
+                else
+                {
+                    // Pas d'image - utiliser une image par défaut ou laisser vide
+                    initiative.ImageUrl = "";
+                    Console.WriteLine("Aucune image fournie");
                 }
 
-                _context.Add(initiative);
-                await _context.SaveChangesAsync();
-                
-                TempData["SuccessMessage"] = "Votre initiative a été soumise avec succès et est en attente de modération.";
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    Console.WriteLine("Tentative de sauvegarde de l'initiative...");
+                    _context.Add(initiative);
+                    
+                    Console.WriteLine("Initiative ajoutée au contexte, tentative de sauvegarde dans la base de données...");
+                    var result = await _context.SaveChangesAsync();
+                    
+                    Console.WriteLine($"Sauvegarde réussie! {result} enregistrement(s) affecté(s).");
+                    Console.WriteLine($"ID de l'initiative: {initiative.Id}");
+                    Console.WriteLine($"Titre: {initiative.Title}");
+                    Console.WriteLine($"Image URL: {initiative.ImageUrl}");
+                    
+                    // Envoyer une notification à l'utilisateur (après la sauvegarde)
+                    try
+                    {
+                        await _notificationService.SendInitiativeSubmittedNotificationAsync(
+                            user.Id, 
+                            initiative.Id, 
+                            initiative.Title
+                        );
+                        Console.WriteLine("Notification envoyée avec succès");
+                    }
+                    catch (Exception notifEx)
+                    {
+                        Console.WriteLine($"Erreur lors de l'envoi de la notification: {notifEx.Message}");
+                        // Ne pas bloquer la création de l'initiative si la notification échoue
+                    }
+                    
+                    TempData["SuccessMessage"] = "Votre initiative a été soumise pour approbation ! Vous recevrez une notification dès qu'elle sera examinée.";
+                    return RedirectToAction("Index", "Initiative", new { area = "" });
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    Console.WriteLine($"=== ERREUR BASE DE DONNÉES DÉTAILLÉE ===");
+                    Console.WriteLine($"Message principal: {dbEx.Message}");
+                    Console.WriteLine($"Inner Exception: {dbEx.InnerException?.Message}");
+                    Console.WriteLine($"Inner Exception Type: {dbEx.InnerException?.GetType().Name}");
+                    
+                    if (dbEx.InnerException != null)
+                    {
+                        Console.WriteLine($"Inner Inner Exception: {dbEx.InnerException.InnerException?.Message}");
+                    }
+                    
+                    Console.WriteLine($"Entity Entry: {dbEx.Entries?.FirstOrDefault()?.Entity?.GetType().Name}");
+                    Console.WriteLine($"Stack Trace: {dbEx.StackTrace}");
+                    
+                    // Afficher les propriétés de l'initiative qui cause le problème
+                    Console.WriteLine($"=== PROPERTIES DE L'INITIATIVE ===");
+                    Console.WriteLine($"Title: '{initiative.Title}'");
+                    Console.WriteLine($"Description: '{initiative.Description}'");
+                    Console.WriteLine($"Location: '{initiative.Location}'");
+                    Console.WriteLine($"CategoryId: {initiative.CategoryId}");
+                    Console.WriteLine($"UserId: '{initiative.UserId}'");
+                    Console.WriteLine($"Status: '{initiative.Status}'");
+                    Console.WriteLine($"ImageUrl: '{initiative.ImageUrl}'");
+                    Console.WriteLine($"CreatedAt: {initiative.CreatedAt}");
+                    Console.WriteLine($"TargetDate: {initiative.TargetDate}");
+                    Console.WriteLine($"Goals: '{initiative.Goals}'");
+                    Console.WriteLine($"RequiredResources: '{initiative.RequiredResources}'");
+                    Console.WriteLine($"Duration: '{initiative.Duration}'");
+                    Console.WriteLine($"RequiredSkills: '{initiative.RequiredSkills}'");
+                    Console.WriteLine($"Budget: {initiative.Budget}");
+                    
+                    ModelState.AddModelError("", $"Erreur base de données: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Erreur générale: {ex.Message}");
+                    Console.WriteLine($"Type: {ex.GetType().Name}");
+                    Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                    ModelState.AddModelError($"", "Erreur technique: {ex.Message}");
+                }
             }
 
             await LoadCategories();
@@ -341,7 +484,7 @@ namespace EcoCity.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id = model.Id });
+                return RedirectToAction("Details", "Initiative", new { area = "", id = model.Id });
             }
 
             await LoadCategories();
@@ -422,7 +565,7 @@ namespace EcoCity.Controllers
                 Console.WriteLine($"Error deleting initiative: {ex.Message}");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Initiative", new { area = "" });
         }
 
         // POST: Initiative/Vote/5
@@ -431,11 +574,17 @@ namespace EcoCity.Controllers
         public async Task<IActionResult> Vote(int id, bool isUpvote)
         {
             var userId = _userManager.GetUserId(User);
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "Vous devez être connecté pour voter." });
+            }
+            
             var initiative = await _context.Initiatives.FindAsync(id);
             
             if (initiative == null)
             {
-                return NotFound();
+                return Json(new { success = false, message = "Initiative non trouvée." });
             }
 
             // Vérifier si l'utilisateur a déjà voté pour cette initiative
@@ -474,7 +623,7 @@ namespace EcoCity.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, votesCount = initiative.VotesCount });
+            return Json(new { success = true, newVoteCount = initiative.VotesCount });
         }
 
         // POST: Initiative/AddComment/5
@@ -509,7 +658,15 @@ namespace EcoCity.Controllers
             // Recharger l'utilisateur pour inclure les informations nécessaires à l'affichage
             comment.User = await _userManager.FindByIdAsync(userId);
 
-            return PartialView("_CommentPartial", comment);
+            return Json(new { 
+                success = true, 
+                comment = new {
+                    id = comment.Id,
+                    content = comment.Content,
+                    createdAt = comment.CreatedAt.ToString("dd/MM/yyyy HH:mm"),
+                    userName = comment.User.UserName
+                }
+            });
         }
 
         private bool InitiativeExists(int id)
@@ -542,7 +699,7 @@ namespace EcoCity.Controllers
                 categories = await _context.Categories.ToListAsync();
             }
             
-            ViewBag.Categories = new SelectList(categories, "Id", "Name");
+            ViewBag.Categories = categories;
         }
     }
 }

@@ -25,5 +25,7 @@ namespace EcoCity.Models
         [Required]
         [StringLength(450)]
         public string UserInitiativeKey { get; set; }
+        
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

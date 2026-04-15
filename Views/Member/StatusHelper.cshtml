@@ -1,0 +1,49 @@
+@{
+    // Helper functions for status display
+    string GetStatusClass(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+        
+        char firstChar = status[0];
+        return firstChar switch
+        {
+            'E' => "status-pending",
+            'A' => "status-approved", 
+            'R' => "status-rejected",
+            _ => ""
+        };
+    }
+    
+    string GetStatusIcon(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+        
+        char firstChar = status[0];
+        return firstChar switch
+        {
+            'E' => "bi-clock-history",
+            'A' => "bi-check-circle",
+            'R' => "bi-x-circle",
+            _ => ""
+        };
+    }
+    
+    string GetStatusText(string status)
+    {
+        if (string.IsNullOrEmpty(status)) return "";
+        
+        char firstChar = status[0];
+        return firstChar switch
+        {
+            'E' => "En attente de validation",
+            'A' => "Approuvée",
+            'R' => "Rejetée",
+            _ => status
+        };
+    }
+    
+    bool IsRejected(string status)
+    {
+        return !string.IsNullOrEmpty(status) && status[0] == 'R';
+    }
+}

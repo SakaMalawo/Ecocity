@@ -1,0 +1,128 @@
+@model ApplicationUser
+@{
+    ViewData["Title"] = "Mon Profil - Espace Membre";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-5">
+                <h2 class="text-white fw-bold text-center mb-4">
+                    <i class="bi bi-person-circle me-2"></i> Mon Profil
+                </h2>
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @TempData["SuccessMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                @if (ViewData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        @ViewData["ErrorMessage"]
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="text-center mb-4">
+                        @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+                        {
+                            <img src="@Model.ProfileImageUrl" alt="Photo de profil" class="rounded-circle mb-3" style="width: 120px; height: 120px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="bg-gradient-primary d-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 120px; height: 120px;">
+                                <i class="bi bi-person text-white fs-1"></i>
+                            </div>
+                        }
+                        <div>
+                            <button type="button" class="btn btn-glass btn-sm mt-2">
+                                <i class="bi bi-camera me-1"></i> Changer la photo
+                            </button>
+                            <input type="file" name="ProfileImage" accept="image/*" style="display: none;" id="profileImageInput">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="FirstName" class="form-label text-white fw-semibold">Prénom *</label>
+                            <input type="text" class="form-control" id="FirstName" name="FirstName" value="@Model.FirstName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="LastName" class="form-label text-white fw-semibold">Nom *</label>
+                            <input type="text" class="form-control" id="LastName" name="LastName" value="@Model.LastName" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="PhoneNumber" class="form-label text-white fw-semibold">Téléphone</label>
+                            <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" value="@Model.PhoneNumber">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="Email" class="form-label text-white fw-semibold">Email</label>
+                            <input type="email" class="form-control" id="Email" name="Email" value="@Model.Email" readonly>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="Address" class="form-label text-white fw-semibold">Adresse</label>
+                            <input type="text" class="form-control" id="Address" name="Address" value="@Model.Address" placeholder="Numéro et rue">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="City" class="form-label text-white fw-semibold">Ville *</label>
+                            <input type="text" class="form-control" id="City" name="City" value="@Model.City" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="PostalCode" class="form-label text-white fw-semibold">Code postal</label>
+                            <input type="text" class="form-control" id="PostalCode" name="PostalCode" value="@Model.PostalCode">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="Bio" class="form-label text-white fw-semibold">Biographie</label>
+                            <textarea class="form-control" id="Bio" name="Bio" rows="4" placeholder="Parlez-vous en quelques mots...">@Model.Bio</textarea>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-glass-eco btn-lg">
+                            <i class="bi bi-check-circle me-2"></i> Mettre à jour le profil
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Gérer le changement de photo de profil
+    document.getElementById('profileImageInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.querySelector('.rounded-circle').src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    document.querySelector('.btn-glass.mt-2').addEventListener('click', function() {
+        document.getElementById('profileImageInput').click();
+    });
+</script>

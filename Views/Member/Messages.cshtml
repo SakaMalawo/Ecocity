@@ -1,0 +1,124 @@
+@model IEnumerable<EcoCity.ViewModels.MessageViewModel>
+@{
+    ViewData["Title"] = "Messages - Espace Membre";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 fw-bold text-white mb-3">
+                        <i class="bi bi-envelope-fill me-2"></i> Messages
+                    </h1>
+                    <p class="lead text-white-50">Consultez et gérez tous vos messages</p>
+                </div>
+                <button class="btn btn-glass-eco btn-lg">
+                    <i class="bi bi-pencil-square me-2"></i> Nouveau message
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation rapide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-3">
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Dashboard", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
+                    </a>
+                    <a href="@Url.Action("MyInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-lightbulb me-1"></i> Mes initiatives
+                    </a>
+                    <a href="@Url.Action("SupportedInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-heart me-1"></i> Initiatives soutenues
+                    </a>
+                    <a href="@Url.Action("Messages", "Member", new { area = "" })" class="btn btn-glass btn-sm active">
+                        <i class="bi bi-envelope me-1"></i> Messages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtres de messages -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-glass btn-sm active">Tous</button>
+                    <button class="btn btn-glass btn-sm">Non lus</button>
+                    <button class="btn btn-glass btn-sm">Importants</button>
+                    <button class="btn btn-glass btn-sm">Envoyés</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des messages -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @if (Model.Any())
+            {
+                @foreach (var message in Model)
+                {
+                    <div class="initiative-post mb-3 @(message.IsRead ? "" : "unread")">
+                        <div class="d-flex align-items-start">
+                            <div class="user-avatar me-3">
+                                <img src="@message.SenderAvatar" alt="Avatar" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="text-white fw-bold mb-1">@message.SenderName</h6>
+                                        <p class="text-white-50 small mb-0">@message.Subject</p>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-white-50">@message.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
+                                        @if (!message.IsRead)
+                                        {
+                                            <span class="badge bg-eco ms-2">Nouveau</span>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="text-white-50 mb-2">
+                                    @(message.Content?.Length > 150 ? message.Content.Substring(0, 150) + "..." : message.Content)
+                                </p>
+                                <div class="d-flex gap-2">
+                                    <a href="#" class="btn btn-glass btn-sm">
+                                        <i class="bi bi-envelope-open me-1"></i> Lire
+                                    </a>
+                                    <a href="#" class="btn btn-glass btn-sm">
+                                        <i class="bi bi-reply me-1"></i> Répondre
+                                    </a>
+                                    <a href="#" class="btn btn-glass btn-sm">
+                                        <i class="bi bi-trash me-1"></i> Supprimer
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="glass-card p-5 text-center">
+                    <i class="bi bi-inbox text-white fs-1 mb-3"></i>
+                    <h4 class="text-white mb-3">Aucun message</h4>
+                    <p class="text-white-50 mb-4">Votre boîte de réception est vide.</p>
+                    <button class="btn btn-glass-eco btn-lg pulse-element">
+                        <i class="bi bi-pencil-square me-2"></i> Envoyer votre premier message
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+.unread {
+    border-left: 4px solid #43e97b !important;
+    background: rgba(67, 233, 123, 0.1) !important;
+}
+</style>

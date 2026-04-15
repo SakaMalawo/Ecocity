@@ -7,8 +7,8 @@
     <div class="row">
         <div class="col-lg-8 mx-auto">
             <div class="text-center mb-5">
-                <h1 class="display-4 fw-bold mb-4">Contactez-nous</h1>
-                <p class="lead text-muted">Nous sommes là pour répondre à vos questions et suggestions</p>
+                <h1 class="display-4 fw-bold text-white mb-4">Contactez-nous</h1>
+                <p class="lead text-white-50">Nous sommes là pour répondre à vos questions et suggestions</p>
             </div>
 
             @if (TempData["Message"] != null)
@@ -22,13 +22,13 @@
 
             <div class="row">
                 <div class="col-md-6 mb-4">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="glass-card h-100">
                         <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-envelope-fill text-primary me-2"></i>
+                            <h5 class="text-white fw-bold mb-3">
+                                <i class="bi bi-envelope-fill text-info me-2"></i>
                                 Par Email
                             </h5>
-                            <p class="card-text">
+                            <p class="text-white-50">
                                 contact@ecocity.fr<br>
                                 Nous répondons sous 24-48h ouvrées
                             </p>
@@ -36,13 +36,13 @@
                     </div>
                 </div>
                 <div class="col-md-6 mb-4">
-                    <div class="card h-100 border-0 shadow-sm">
+                    <div class="glass-card h-100">
                         <div class="card-body">
-                            <h5 class="card-title mb-3">
-                                <i class="bi bi-geo-alt-fill text-success me-2"></i>
+                            <h5 class="text-white fw-bold mb-3">
+                                <i class="bi bi-geo-alt-fill text-eco me-2"></i>
                                 Notre Adresse
                             </h5>
-                            <p class="card-text">
+                            <p class="text-white-50">
                                 123 Rue de l'Écologie<br>
                                 75001 Paris, France
                             </p>
@@ -51,38 +51,38 @@
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
+            <div class="glass-card">
                 <div class="card-body p-5">
-                    <h4 class="mb-4">Envoyez-nous un message</h4>
+                    <h4 class="text-white fw-bold mb-4">Envoyez-nous un message</h4>
                     
                     <form asp-action="Contact" method="post">
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Name" class="form-label fw-semibold">Nom complet</label>
+                                <label asp-for="Name" class="form-label text-white fw-semibold">Nom complet</label>
                                 <input asp-for="Name" class="form-control" placeholder="Votre nom">
                                 <span asp-validation-for="Name" class="text-danger"></span>
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label asp-for="Email" class="form-label fw-semibold">Email</label>
+                                <label asp-for="Email" class="form-label text-white fw-semibold">Email</label>
                                 <input asp-for="Email" class="form-control" placeholder="votre.email@exemple.com">
                                 <span asp-validation-for="Email" class="text-danger"></span>
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label asp-for="Subject" class="form-label fw-semibold">Sujet</label>
+                            <label asp-for="Subject" class="form-label text-white fw-semibold">Sujet</label>
                             <input asp-for="Subject" class="form-control" placeholder="Quel est le sujet de votre message ?">
                             <span asp-validation-for="Subject" class="text-danger"></span>
                         </div>
                         
                         <div class="mb-4">
-                            <label asp-for="Message" class="form-label fw-semibold">Message</label>
+                            <label asp-for="Message" class="form-label text-white fw-semibold">Message</label>
                             <textarea asp-for="Message" class="form-control" rows="5" placeholder="Décrivez votre question ou suggestion..."></textarea>
                             <span asp-validation-for="Message" class="text-danger"></span>
                         </div>
                         
                         <div class="text-center">
-                            <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <button type="submit" class="btn btn-glass-eco btn-lg px-5">
                                 <i class="bi bi-send-fill me-2"></i>Envoyer le message
                             </button>
                         </div>
@@ -92,25 +92,31 @@
 
             <div class="row mt-5">
                 <div class="col-md-4 text-center mb-3">
-                    <div class="mb-3">
-                        <i class="bi bi-clock-fill text-primary" style="font-size: 2rem;"></i>
+                    <div class="glass-card p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-clock-fill text-info" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Disponibilité</h5>
+                        <p class="text-white-50">Lun-Ven: 9h-18h<br>Sam-Dim: Fermé</p>
                     </div>
-                    <h5>Disponibilité</h5>
-                    <p class="text-muted">Lun-Ven: 9h-18h<br>Sam-Dim: Fermé</p>
                 </div>
                 <div class="col-md-4 text-center mb-3">
-                    <div class="mb-3">
-                        <i class="bi bi-telephone-fill text-success" style="font-size: 2rem;"></i>
+                    <div class="glass-card p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-telephone-fill text-eco" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Téléphone</h5>
+                        <p class="text-white-50">+33 1 23 45 67 89<br>Réponse rapide garantie</p>
                     </div>
-                    <h5>Téléphone</h5>
-                    <p class="text-muted">+33 1 23 45 67 89<br>Réponse rapide garantie</p>
                 </div>
                 <div class="col-md-4 text-center mb-3">
-                    <div class="mb-3">
-                        <i class="bi bi-chat-dots-fill text-info" style="font-size: 2rem;"></i>
+                    <div class="glass-card p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-headset text-warning" style="font-size: 2rem;"></i>
+                        </div>
+                        <h5 class="text-white fw-bold">Support</h5>
+                        <p class="text-white-50">support@ecocity.fr<br>Assistance technique 7j/7</p>
                     </div>
-                    <h5>Support</h5>
-                    <p class="text-muted">Chat en ligne<br>Disponible 24/7</p>
                 </div>
             </div>
         </div>

@@ -1,0 +1,305 @@
+/* Glassmorphism Design System */
+
+/* Variables */
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.1) !important;
+    --glass-bg-light: rgba(255, 255, 255, 0.15) !important;
+    --glass-bg-dark: rgba(255, 255, 255, 0.05) !important;
+    --glass-border: rgba(255, 255, 255, 0.2) !important;
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+    --glass-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Background gradient */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%) !important;
+    background-attachment: fixed !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Glass card */
+.glass-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: var(--glass-shadow) !important;
+    transition: all 0.3s ease !important;
+}
+
+.glass-card:hover {
+    background: var(--glass-bg-light) !important;
+    box-shadow: var(--glass-shadow-hover) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Glass navbar */
+.navbar {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: #fff !important;
+    background: var(--glass-bg-light) !important;
+    border-radius: 10px !important;
+}
+
+.navbar-brand {
+    color: #fff !important;
+    font-weight: bold !important;
+}
+
+/* Glass buttons */
+.btn-glass {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: #fff !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+}
+
+.btn-glass:hover {
+    background: var(--glass-bg-light) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+    box-shadow: var(--glass-shadow-hover) !important;
+}
+
+/* Glass forms */
+.form-control {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--glass-border) !important;
+    color: #fff !important;
+    border-radius: 12px !important;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.form-control:focus {
+    background: var(--glass-bg-light) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: #fff !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Glass dropdown */
+.dropdown-menu {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 15px !important;
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.dropdown-item {
+    color: rgba(255, 255, 255, 0.9) !important;
+    transition: all 0.3s ease !important;
+}
+
+.dropdown-item:hover {
+    background: var(--glass-bg-light) !important;
+    color: #fff !important;
+}
+
+/* Glass table */
+.table {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-radius: 15px !important;
+    overflow: hidden !important;
+}
+
+.table th {
+    background: var(--glass-bg-dark) !important;
+    color: #fff !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+}
+
+.table td {
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Glass modal */
+.modal-content {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.modal-header {
+    background: var(--glass-bg-dark) !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+    color: #fff !important;
+}
+
+.modal-body {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Glass alert */
+.alert {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px !important;
+    color: #fff !important;
+}
+
+/* Particles */
+.particles {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
+.particle {
+    position: absolute !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    animation: float-up 20s infinite linear !important;
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(100vh) rotate(0deg) !important;
+        opacity: 0 !important;
+    }
+    10% {
+        opacity: 1 !important;
+    }
+    90% {
+        opacity: 1 !important;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg) !important;
+        opacity: 0 !important;
+    }
+}
+
+/* Text colors for glass theme */
+.text-white-glass {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.text-muted-glass {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Hero section */
+.hero-section {
+    min-height: 60vh !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    color: #fff !important;
+}
+
+.hero-title {
+    font-size: 3.5rem !important;
+    font-weight: bold !important;
+    margin-bottom: 1rem !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Initiative cards */
+.initiative-card {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    color: #fff !important;
+}
+
+.initiative-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: var(--glass-shadow-hover) !important;
+    background: var(--glass-bg-light) !important;
+}
+
+/* Status badges */
+.badge-glass {
+    background: var(--glass-bg) !important;
+    backdrop-filter: blur(5px) !important;
+    -webkit-backdrop-filter: blur(5px) !important;
+    border: 1px solid var(--glass-border) !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 20px !important;
+    font-weight: 500 !important;
+}
+
+/* Footer */
+footer {
+    background: var(--glass-bg-dark) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border-top: 1px solid var(--glass-border) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Container adjustments */
+.container {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* Main content area */
+main {
+    padding-top: 2rem !important;
+    padding-bottom: 2rem !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem !important;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem !important;
+    }
+    
+    .glass-card {
+        margin: 1rem 0 !important;
+    }
+}

@@ -2,15 +2,18 @@
 @{
     ViewData["Title"] = "EcoCity - Plateforme d'initiatives écologiques";
 }
+@Html.AntiForgeryToken()
 
-<!-- Messages d'alerte -->
+<!-- Messages d'alerte avec glassmorphism -->
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="container mt-3">
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>
-            @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="glass-card p-4 border-success" style="background: rgba(76, 175, 80, 0.1) !important; border: 1px solid rgba(76, 175, 80, 0.3) !important;">
+            <div class="d-flex align-items-center text-white">
+                <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+                <div class="flex-grow-1">@TempData["SuccessMessage"]</div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </div>
     </div>
 }
@@ -18,51 +21,91 @@
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="container mt-3">
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="glass-card p-4 border-danger" style="background: rgba(244, 67, 54, 0.1) !important; border: 1px solid rgba(244, 67, 54, 0.3) !important;">
+            <div class="d-flex align-items-center text-white">
+                <i class="bi bi-exclamation-triangle-fill me-3 fs-4"></i>
+                <div class="flex-grow-1">@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         </div>
     </div>
 }
 
-<!-- Section Héros -->
-<section class="hero-section bg-gradient-primary text-white py-5 mb-5 hero-slide">
+<!-- Section Héros avec glassmorphism -->
+<section class="hero-section text-white py-5 mb-5">
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6 slide-in-left">
-                <h1 class="display-4 fw-bold mb-4">Bienvenue sur EcoCity</h1>
-                <p class="lead mb-4">La plateforme collaborative pour les initiatives écologiques citoyennes</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="@Url.Action("Create", "Initiative")" class="btn btn-light btn-lg btn-gradient">Proposer une initiative</a>
-                    <a href="#initiatives" class="btn btn-outline-light btn-lg">Découvrir</a>
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title floating-element">
+                        <i class="bi bi-tree-fill text-success me-3"></i>EcoCity
+                    </h1>
+                    <h2 class="hero-subtitle mb-4">
+                        Transformons nos idées en initiatives pour un avenir durable
+                    </h2>
+                    <p class="lead mb-5 text-white-50">
+                        Rejoignez une communauté engagée dans la création d'un monde plus écologique, 
+                        solidaire et innovant. Chaque initiative compte, chaque action a un impact.
+                    </p>
+                    <div class="d-flex gap-3 flex-wrap">
+                        <a href="@Url.Action("Create", "Initiative")" class="btn btn-glass-eco btn-lg pulse-element">
+                            <i class="bi bi-plus-circle me-2"></i>Lancer une initiative
+                        </a>
+                        <a href="#initiatives" class="btn btn-glass btn-lg">
+                            <i class="bi bi-compass me-2"></i>Explorer
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="col-lg-6">
-                <div class="row text-center slide-in-right">
+                <div class="row text-center">
                     <div class="col-6 col-md-3 mb-4">
-                        <div class="stat-item stat-card p-3 rounded">
-                            <h3 class="fw-bold text-white">@Model.TotalInitiatives</h3>
-                            <p class="text-white-50">Initiatives</p>
+                        <div class="glass-card p-4 floating-element" style="animation-delay: 0.1s;">
+                            <div class="stat-item">
+                                <h3 class="fw-bold text-white mb-2">@Model.TotalInitiatives</h3>
+                                <p class="text-white-50 mb-0">Initiatives</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3 mb-4">
-                        <div class="stat-item stat-card p-3 rounded">
-                            <h3 class="fw-bold text-white">@Model.TotalUsers</h3>
-                            <p class="text-white-50">Citoyens</p>
+                        <div class="glass-card p-4 floating-element" style="animation-delay: 0.2s;">
+                            <div class="stat-item">
+                                <h3 class="fw-bold text-white mb-2">@Model.TotalUsers</h3>
+                                <p class="text-white-50 mb-0">Citoyens</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3 mb-4">
-                        <div class="stat-item stat-card p-3 rounded">
-                            <h3 class="fw-bold text-white">@Model.TotalVotes</h3>
-                            <p class="text-white-50">Votes</p>
+                        <div class="glass-card p-4 floating-element" style="animation-delay: 0.3s;">
+                            <div class="stat-item">
+                                <h3 class="fw-bold text-white mb-2">@Model.TotalVotes</h3>
+                                <p class="text-white-50 mb-0">Votes</p>
+                            </div>
                         </div>
                     </div>
                     <div class="col-6 col-md-3 mb-4">
-                        <div class="stat-item stat-card p-3 rounded">
-                            <h3 class="fw-bold text-white">@Model.TotalComments</h3>
-                            <p class="text-white-50">Commentaires</p>
+                        <div class="glass-card p-4 floating-element" style="animation-delay: 0.4s;">
+                            <div class="stat-item">
+                                <h3 class="fw-bold text-white mb-2">@Model.TotalComments</h3>
+                                <p class="text-white-50 mb-0">Commentaires</p>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                
+                <!-- Floating Icons -->
+                <div class="position-relative mt-5">
+                    <div class="floating-icon" style="position: absolute; top: -20px; left: 10%; animation-delay: 0.5s;">
+                        <i class="bi bi-recycle fs-2 text-success opacity-75"></i>
+                    </div>
+                    <div class="floating-icon" style="position: absolute; top: 20px; right: 15%; animation-delay: 0.7s;">
+                        <i class="bi bi-globe fs-2 text-info opacity-75"></i>
+                    </div>
+                    <div class="floating-icon" style="position: absolute; bottom: -10px; left: 25%; animation-delay: 0.9s;">
+                        <i class="bi bi-heart-fill fs-2 text-danger opacity-75"></i>
+                    </div>
+                    <div class="floating-icon" style="position: absolute; bottom: 20px; right: 20%; animation-delay: 1.1s;">
+                        <i class="bi bi-lightning-fill fs-2 text-warning opacity-75"></i>
                     </div>
                 </div>
             </div>
@@ -70,111 +113,395 @@
     </div>
 </section>
 
-<!-- Initiatives Récentes -->
+<!-- Section Initiatives Récentes - Style Réseau Social -->
 <section id="initiatives" class="py-5">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="fw-bold mb-3">Initiatives Récentes</h2>
-                <p class="text-muted">Découvrez les dernières propositions écologiques</p>
-            </div>
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-white mb-3">Fil d'actualités des Initiatives</h2>
+            <p class="lead text-white-50">Découvrez et soutenez les projets écologiques de votre communauté</p>
         </div>
         
-        <div class="row">
-            @if (Model.RecentInitiatives.Any())
-            {
-                @foreach (var initiative in Model.RecentInitiatives)
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                @if (Model.RecentInitiatives.Any())
                 {
-                    <div class="col-md-6 col-lg-4 mb-4 fade-in" style="animation-delay: @(Model.RecentInitiatives.IndexOf(initiative) * 0.1)s">
-                        <div class="card h-100 shadow-sm initiative-card">
-                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
-                            {
-                                <img src="@initiative.ImageUrl" class="card-img-top" alt="@initiative.Title" style="height: 200px; object-fit: cover;">
-                            }
-                            <div class="card-body d-flex flex-column">
-                                <span class="badge bg-success mb-2">@initiative.Category?.Name</span>
-                                <h5 class="card-title">@initiative.Title</h5>
-                                <p class="card-text text-muted flex-grow-1">@(initiative.Description?.Length > 150 ? initiative.Description.Substring(0, 150) + "..." : initiative.Description)</p>
-                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                    <small class="text-muted">
-                                        <i class="bi bi-person"></i> @initiative.User?.UserName
-                                    </small>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar"></i> @initiative.CreatedAt.ToString("dd/MM/yyyy")
-                                    </small>
+                    @foreach (var initiative in Model.RecentInitiatives)
+                    {
+                        <div class="initiative-post mb-4 border border-secondary rounded p-3">
+                            <!-- En-tête du post -->
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="user-avatar-lg me-3">
+                                    <img src="https://picsum.photos/seed/@(initiative.User?.UserName ?? "user")/50/50.jpg" 
+                                         alt="Avatar" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                                 </div>
-                                <div class="mt-3">
-                                    <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-primary btn-sm">Voir les détails</a>
+                                <div class="flex-grow-1">
+                                    <h6 class="text-white fw-bold mb-1">@(initiative.User?.UserName ?? "Utilisateur anonyme")</h6>
+                                    <div class="d-flex align-items-center text-white-50 small">
+                                        <span class="category-pill me-2">@(initiative.Category?.Name ?? "Non catégorisée")</span>
+                                        <span><i class="bi bi-clock me-1"></i>@(initiative.CreatedAt.ToString("dd MMM yyyy à HH:mm"))</span>
+                                    </div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="btn btn-glass btn-sm" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#"><i class="bi bi-flag me-2"></i>Signaler</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark me-2"></i>Sauvegarder</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Contenu du post -->
+                            <div class="post-content">
+                                <h4 class="text-white fw-bold mb-3">@(initiative.Title ?? "Titre non défini")</h4>
+                                <p class="text-white-50 mb-3">@(initiative.Description ?? "Description non disponible")</p>
+                                
+                                @if (!string.IsNullOrEmpty(initiative.ImageUrl))
+                                {
+                                    <div class="post-image mb-3">
+                                        <img src="@initiative.ImageUrl" class="img-fluid rounded" style="max-width: 400px; max-height: 300px; object-fit: cover; width: 100%;" alt="@(initiative.Title ?? "Image")">
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="post-image mb-3">
+                                        <div class="bg-gradient-primary d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                            <i class="bi bi-image text-white fs-1 opacity-50"></i>
+                                        </div>
+                                    </div>
+                                }
+                                
+                                @if (!string.IsNullOrEmpty(initiative.Location))
+                                {
+                                    <div class="location-info mb-3">
+                                        <i class="bi bi-geo-alt text-info me-2"></i>
+                                        <span class="text-white-50">@initiative.Location</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Actions du post -->
+                            <div class="post-actions d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
+                                <div class="action-buttons">
+                                    <button class="btn btn-glass btn-sm me-2" onclick="voteForInitiative(@initiative.Id, true)">
+                                        <i class="bi bi-hand-thumbs-up me-1"></i>
+                                        <span class="vote-count">@initiative.VotesCount</span>
+                                    </button>
+                                    <button class="btn btn-glass btn-sm me-2" onclick="toggleComments(@initiative.Id)">
+                                        <i class="bi bi-chat me-1"></i>
+                                        <span class="comment-count">@(initiative.Comments?.Count ?? 0)</span>
+                                    </button>
+                                    <button class="btn btn-glass btn-sm me-2" onclick="shareInitiative(@initiative.Id)">
+                                        <i class="bi bi-share me-1"></i>
+                                        Partager
+                                    </button>
+                                </div>
+                                <div>
+                                    <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" 
+                                       class="btn btn-glass-eco btn-sm">
+                                        <i class="bi bi-arrow-right me-1"></i>Voir les détails
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Section commentaires (cachée par défaut) -->
+                            <div class="comments-section mt-3 pt-3 border-top border-secondary" id="comments-@initiative.Id" style="display: none;">
+                                <div class="comment-form mb-3">
+                                    <div class="d-flex">
+                                        <img src="https://picsum.photos/seed/currentuser/40/40.jpg" 
+                                             alt="Your Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                        <div class="flex-grow-1">
+                                            <textarea class="form-control" placeholder="Ajoutez un commentaire..." rows="2"></textarea>
+                                            <button class="btn btn-glass-eco btn-sm mt-2">Commenter</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="comments-list">
+                                @if (initiative.Comments?.Any() == true)
+                                {
+                                    @foreach (var comment in initiative.Comments.Take(3))
+                                    {
+                                        <div class="comment mb-2">
+                                            <div class="d-flex">
+                                                <img src="https://picsum.photos/seed/@(comment.User?.UserName ?? "commenter")/40/40.jpg" 
+                                                     alt="Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                                <div class="flex-grow-1">
+                                                    <div class="d-flex justify-content-between">
+                                                        <h6 class="text-white fw-bold small mb-1">@comment.User?.UserName</h6>
+                                                        <small class="text-white-50">@comment.CreatedAt.ToString("dd MMM HH:mm")</small>
+                                                    </div>
+                                                    <p class="text-white-50 small mb-0">@comment.Content</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                                 </div>
                             </div>
                         </div>
+                    }
+                }
+                else
+                {
+                    <div class="glass-card p-5 text-center">
+                        <i class="bi bi-lightbulb text-white fs-1 mb-3"></i>
+                        <h4 class="text-white mb-3">Aucune initiative récente</h4>
+                        <p class="text-white-50 mb-4">Soyez le premier à proposer une initiative écologique et à inspirer votre communauté !</p>
+                        <a href="@Url.Action("Create", "Initiative")" class="btn btn-glass-eco pulse-element">
+                            <i class="bi bi-plus-circle me-2"></i>Lancer la première initiative
+                        </a>
                     </div>
                 }
-            }
-            else
-            {
-                <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        <h4>Aucune initiative récente</h4>
-                        <p>Soyez le premier à proposer une initiative écologique !</p>
-                        <a href="@Url.Action("Create", "Initiative")" class="btn btn-primary">Créer une initiative</a>
-                    </div>
-                </div>
-            }
+            </div>
+        </div>
+        
+        <div class="text-center mt-5">
+            <a href="@Url.Action("Index", "Initiative")" class="btn btn-glass btn-lg">
+                <i class="bi bi-grid-3x3-gap me-2"></i>Voir toutes les initiatives
+            </a>
         </div>
     </div>
 </section>
 
-<!-- Initiatives Populaires -->
-<section class="py-5 bg-light">
+<!-- Section Call to Action -->
+<section class="py-5">
     <div class="container">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2 class="fw-bold mb-3">Initiatives Populaires</h2>
-                <p class="text-muted">Les initiatives les plus soutenues par la communauté</p>
-            </div>
-        </div>
-        
-        <div class="row">
-            @if (Model.PopularInitiatives.Any())
-            {
-                @foreach (var initiative in Model.PopularInitiatives)
-                {
-                    <div class="col-md-6 col-lg-4 mb-4 fade-in" style="animation-delay: @(Model.PopularInitiatives.IndexOf(initiative) * 0.1)s">
-                        <div class="card h-100 shadow-sm initiative-card">
-                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
-                            {
-                                <img src="@initiative.ImageUrl" class="card-img-top" alt="@initiative.Title" style="height: 200px; object-fit: cover;">
-                            }
-                            <div class="card-body d-flex flex-column">
-                                <span class="badge bg-warning text-dark mb-2">@initiative.Category?.Name</span>
-                                <h5 class="card-title">@initiative.Title</h5>
-                                <p class="card-text text-muted flex-grow-1">@(initiative.Description?.Length > 150 ? initiative.Description.Substring(0, 150) + "..." : initiative.Description)</p>
-                                <div class="d-flex justify-content-between align-items-center mt-auto">
-                                    <small class="text-muted">
-                                        <i class="bi bi-person"></i> @initiative.User?.UserName
-                                    </small>
-                                    <div class="text-warning">
-                                        <i class="bi bi-star-fill"></i> @initiative.VotesCount votes
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-primary btn-sm">Voir les détails</a>
-                                </div>
-                            </div>
+        <div class="glass-card p-5 text-center position-relative overflow-hidden">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: var(--eco-gradient); opacity: 0.1;"></div>
+            <div class="position-relative">
+                <i class="bi bi-rocket-takeoff text-white fs-1 mb-4 floating-element"></i>
+                <h2 class="display-5 fw-bold text-white mb-3">Prêt à faire la différence ?</h2>
+                <p class="lead text-white-50 mb-5">
+                    Rejoignez des milliers de citoyens engagés et transformez vos idées en actions concrètes 
+                    pour un avenir plus durable et solidaire.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="@Url.Action("Create", "Initiative")" class="btn btn-glass-eco btn-lg pulse-element">
+                        <i class="bi bi-plus-circle me-2"></i>Démarrer une initiative
+                    </a>
+                    <a href="@Url.Action("Register", "Account")" class="btn btn-glass btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Rejoindre la communauté
+                    </a>
+                </div>
+                
+                <!-- Stats CTA -->
+                <div class="row mt-5 pt-5">
+                    <div class="col-md-4 mb-4">
+                        <div class="glass-card p-3">
+                            <h3 class="text-white fw-bold mb-1">@Model.TotalInitiatives+</h3>
+                            <p class="text-white-50 small mb-0">Initiatives créées</p>
                         </div>
                     </div>
-                }
-            }
-            else
-            {
-                <div class="col-12">
-                    <div class="alert alert-info text-center">
-                        <h4>Aucune initiative populaire</h4>
-                        <p>Les initiatives populaires apparaîtront ici une fois que les citoyens commenceront à voter.</p>
+                    <div class="col-md-4 mb-4">
+                        <div class="glass-card p-3">
+                            <h3 class="text-white fw-bold mb-1">@Model.TotalUsers+</h3>
+                            <p class="text-white-50 small mb-0">Citoyens engagés</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-4">
+                        <div class="glass-card p-3">
+                            <h3 class="text-white fw-bold mb-1">@Model.TotalVotes+</h3>
+                            <p class="text-white-50 small mb-0">Soutiens exprimés</p>
+                        </div>
                     </div>
                 </div>
-            }
+            </div>
         </div>
     </div>
 </section>
+
+<script>
+    // Vote function
+    function voteForInitiative(initiativeId, isUpvote) {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (!token) {
+            console.error('Token not found');
+            return;
+        }
+        
+        fetch('/Initiative/Vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token.value
+            },
+            body: JSON.stringify({
+                initiativeId: initiativeId,
+                isUpvote: isUpvote
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // Rediriger vers la page de login
+                    window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    return;
+                }
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Update vote count display
+                const voteBtn = event.target.closest('button');
+                const voteCount = voteBtn.querySelector('.vote-count');
+                if (voteCount) {
+                    voteCount.textContent = data.newVoteCount || (parseInt(voteCount.textContent) + 1);
+                }
+                voteBtn.classList.add('voted');
+                voteBtn.innerHTML = '<i class="bi bi-hand-thumbs-up-fill me-1"></i><span class="vote-count">' + (data.newVoteCount || voteCount.textContent) + '</span>';
+            } else {
+                if (data.message && data.message.includes('connecté')) {
+                    // Rediriger vers la page de login
+                    window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                } else {
+                    alert(data.message || 'Une erreur est survenue lors du vote');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            if (error.message.includes('401')) {
+                window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+            } else {
+                alert('Une erreur est survenue lors du vote');
+            }
+        });
+    }
+
+    // Toggle comments function
+    function toggleComments(initiativeId) {
+        // Vérifier si l'utilisateur est connecté en vérifiant s'il y a un token
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (!token) {
+            window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+            return;
+        }
+        
+        const commentsSection = document.getElementById('comments-' + initiativeId);
+        if (commentsSection) {
+            commentsSection.style.display = commentsSection.style.display === 'none' ? 'block' : 'none';
+        }
+    }
+
+    // Share initiative function
+    function shareInitiative(initiativeId) {
+        const url = window.location.origin + '/Initiative/Details/' + initiativeId;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Découvrez cette initiative sur EcoCity',
+                text: 'Découvrez cette initiative écologique',
+                url: url
+            });
+        } else {
+            // Fallback: copy to clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                alert('Lien copié dans le presse-papiers !');
+            }).catch(() => {
+                prompt('Copiez ce lien:', url);
+            });
+        }
+    }
+
+    // Add comment function
+    function addComment(initiativeId) {
+        const token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (!token) {
+            window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+            return;
+        }
+
+        const commentForm = document.querySelector(`#comments-${initiativeId} textarea`);
+        const commentText = commentForm.value.trim();
+        
+        if (!commentText) {
+            alert('Veuillez écrire un commentaire');
+            return;
+        }
+
+        fetch('/Initiative/AddComment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token.value
+            },
+            body: JSON.stringify({
+                id: initiativeId,
+                content: commentText
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    window.location.href = '/Account/Login?returnUrl=' + encodeURIComponent(window.location.pathname);
+                    return;
+                }
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Ajouter le commentaire à la liste
+                const commentsList = document.querySelector(`#comments-${initiativeId} .comments-list`);
+                if (commentsList) {
+                    const commentHtml = `
+                        <div class="comment mb-2">
+                            <div class="d-flex">
+                                <img src="https://picsum.photos/seed/${data.comment.userName}/40/40.jpg" 
+                                     alt="Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="text-white fw-bold small mb-1">${data.comment.userName}</h6>
+                                        <small class="text-white-50">${data.comment.createdAt}</small>
+                                    </div>
+                                    <p class="text-white-50 small mb-0">${data.comment.content}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Créer la liste des commentaires si elle n'existe pas
+                    if (!commentsList.querySelector('.comments-list')) {
+                        const listContainer = document.createElement('div');
+                        listContainer.className = 'comments-list';
+                        commentsList.appendChild(listContainer);
+                    }
+                    
+                    const list = commentsList.querySelector('.comments-list');
+                    list.insertAdjacentHTML('afterbegin', commentHtml);
+                    
+                    // Mettre à jour le compteur de commentaires
+                    const commentBtn = document.querySelector(`button[onclick="toggleComments(${initiativeId})"] .comment-count`);
+                    if (commentBtn) {
+                        commentBtn.textContent = parseInt(commentBtn.textContent) + 1;
+                    }
+                    
+                    // Vider le formulaire
+                    commentForm.value = '';
+                }
+            } else {
+                alert(data.message || 'Une erreur est survenue lors de l\'ajout du commentaire');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Une erreur est survenue lors de l\'ajout du commentaire');
+        });
+    }
+
+    // Ajouter les gestionnaires d'événements pour les formulaires de commentaires
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.comment-form button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const initiativeId = this.closest('.comments-section').id.replace('comments-', '');
+                addComment(initiativeId);
+            });
+        });
+    });
+</script>

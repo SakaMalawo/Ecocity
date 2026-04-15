@@ -1,0 +1,258 @@
+@model IEnumerable<Initiative>
+@{
+    ViewData["Title"] = "Initiatives Soutenues - Espace Membre";
+}
+
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="display-5 fw-bold text-white mb-3">
+                        <i class="bi bi-heart-fill me-2"></i> Initiatives Soutenues
+                    </h1>
+                    <p class="lead text-white-50">Retrouvez toutes les initiatives que vous avez soutenues</p>
+                </div>
+                <a href="@Url.Action("Index", "Initiative", new { area = "" })" class="btn btn-glass-eco btn-lg">
+                    <i class="bi bi-search me-2"></i> Explorer plus d'initiatives
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation rapide -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-3">
+                <div class="d-flex gap-2">
+                    <a href="@Url.Action("Dashboard", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-speedometer2 me-1"></i> Tableau de bord
+                    </a>
+                    <a href="@Url.Action("MyInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-lightbulb me-1"></i> Mes initiatives
+                    </a>
+                    <a href="@Url.Action("SupportedInitiatives", "Member", new { area = "" })" class="btn btn-glass btn-sm active">
+                        <i class="bi bi-heart me-1"></i> Initiatives soutenues
+                    </a>
+                    <a href="@Url.Action("Messages", "Member", new { area = "" })" class="btn btn-glass btn-sm">
+                        <i class="bi bi-envelope me-1"></i> Messages
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Liste des initiatives soutenues -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @if (Model.Any())
+            {
+                @foreach (var initiative in Model)
+                {
+                    <div class="initiative-post mb-4">
+                        <!-- En-tête du post -->
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="user-avatar-lg me-3">
+                                <img src="https://picsum.photos/seed/@(initiative.User?.UserName ?? "user")/50/50.jpg" 
+                                     alt="Avatar" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                            </div>
+                            <div class="flex-grow-1">
+                                <h6 class="text-white fw-bold mb-1">@initiative.User?.UserName</h6>
+                                <div class="d-flex align-items-center text-white-50 small">
+                                    <span class="category-pill me-2">@initiative.Category?.Name</span>
+                                    <span><i class="bi bi-clock me-1"></i>@initiative.CreatedAt.ToString("dd MMM yyyy à HH:mm")</span>
+                                </div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="btn btn-glass btn-sm" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <button class="dropdown-item" onclick="unvoteInitiative(@initiative.Id)">
+                                            <i class="bi bi-heart text-danger me-2"></i> Retirer le soutien
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="@Url.Action("Details", "Initiative", new { area = "", id = initiative.Id })">
+                                            <i class="bi bi-eye me-2"></i> Voir les détails
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" onclick="shareInitiative(@initiative.Id)">
+                                            <i class="bi bi-share me-2"></i> Partager
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Contenu du post -->
+                        <div class="post-content">
+                            <h4 class="text-white fw-bold mb-3">@initiative.Title</h4>
+                            <p class="text-white-50 mb-3">@initiative.Description</p>
+                            
+                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
+                            {
+                                <div class="post-image mb-3">
+                                    <img src="@initiative.ImageUrl" class="img-fluid rounded" alt="@initiative.Title">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="post-image mb-3">
+                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                        <i class="bi bi-image text-white fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(initiative.Location))
+                            {
+                                <div class="location-info mb-3">
+                                    <i class="bi bi-geo-alt text-info me-2"></i>
+                                    <span class="text-white-50">@initiative.Location</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(initiative.Goals))
+                            {
+                                <div class="goals-info mb-3">
+                                    <h6 class="text-white fw-bold mb-2"><i class="bi bi-target me-2"></i>Objectifs</h6>
+                                    <p class="text-white-50 small mb-0">@initiative.Goals</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Actions du post -->
+                        <div class="post-actions d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
+                            <div class="action-buttons">
+                                <button class="btn btn-glass btn-sm me-2 voted" onclick="unvoteInitiative(@initiative.Id)">
+                                    <i class="bi bi-hand-thumbs-up-fill me-1"></i>
+                                    <span class="vote-count">@initiative.VotesCount</span>
+                                </button>
+                                <button class="btn btn-glass btn-sm me-2" onclick="toggleComments(@initiative.Id)">
+                                    <i class="bi bi-chat me-1"></i>
+                                    <span class="comment-count">@initiative.Comments.Count</span>
+                                </button>
+                                <button class="btn btn-glass btn-sm me-2" onclick="shareInitiative(@initiative.Id)">
+                                    <i class="bi bi-share me-1"></i>
+                                    Partager
+                                </button>
+                            </div>
+                            <div>
+                                <a href="@Url.Action("Details", "Initiative", new { area = "", id = initiative.Id })" 
+                                   class="btn btn-glass-eco btn-sm">
+                                    <i class="bi bi-arrow-right me-1"></i>Voir les détails
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Badge de soutien -->
+                        <div class="mt-3 text-center">
+                            <span class="badge bg-eco bg-opacity-20 text-eco">
+                                <i class="bi bi-heart-fill me-1"></i> Vous soutenez cette initiative
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="glass-card p-5 text-center">
+                    <i class="bi bi-heart text-white fs-1 mb-3"></i>
+                    <h4 class="text-white mb-3">Vous ne soutenez aucune initiative</h4>
+                    <p class="text-white-50 mb-4">Découvrez et soutenez des initiatives écologiques qui vous inspirent !</p>
+                    <a href="@Url.Action("Index", "Initiative", new { area = "" })" class="btn btn-glass-eco btn-lg pulse-element">
+                        <i class="bi bi-search me-2"></i>Explorer les initiatives
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script>
+    // Unvote initiative function
+    function unvoteInitiative(initiativeId) {
+        if (confirm('Êtes-vous sûr de vouloir retirer votre soutien à cette initiative ?')) {
+            fetch('/Initiative/Unvote', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ initiativeId: initiativeId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showNotification('Erreur lors du retrait du soutien.', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('Une erreur est survenue.', 'error');
+            });
+        }
+    }
+    
+    // Share initiative function
+    function shareInitiative(initiativeId) {
+        const shareUrl = window.location.origin + '/Initiative/Details/' + initiativeId;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Découvrez cette initiative écologique',
+                text: 'Rejoignez-nous dans cette belle initiative pour un avenir durable !',
+                url: shareUrl
+            }).then(() => {
+                console.log('Shared successfully');
+            }).catch((error) => {
+                console.log('Error sharing:', error);
+                copyToClipboard(shareUrl);
+            });
+        } else {
+            copyToClipboard(shareUrl);
+        }
+    }
+    
+    function copyToClipboard(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        
+        try {
+            document.execCommand('copy');
+            showNotification('Lien copié dans le presse-papiers !', 'success');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showNotification('Erreur lors de la copie du lien', 'error');
+        }
+        
+        document.body.removeChild(textarea);
+    }
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+</script>

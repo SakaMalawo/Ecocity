@@ -1,196 +1,413 @@
-@model EcoCity.Areas.Admin.Models.ViewModels.DashboardViewModel
+@model EcoCity.Areas.Admin.Models.ViewModels.AdminDashboardViewModel
 @{
-    ViewData["Title"] = "Tableau de bord";
+    ViewData["Title"] = "Dashboard Admin - EcoCity";
     Layout = "_AdminLayout";
 }
 
-<div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Tableau de bord</h1>
-    </div>
-
-    <!-- Cartes de statistiques -->
-    <div class="row">
-        <!-- Utilisateurs -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Utilisateurs</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUsers</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-white">Dashboard Administrateur</h1>
+            <p class="text-white-50 mb-0">Vue d'ensemble de la plateforme EcoCity</p>
         </div>
-
-        <!-- Initiatives -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Initiatives</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalInitiatives</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-lightbulb fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Catégories -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Catégories</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalCategories</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-tags fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Commentaires -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Commentaires</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalComments</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex gap-2">
+            <a asp-area="Admin" asp-controller="Initiative" asp-action="Pending" class="btn btn-warning">
+                <i class="bi bi-clock-history me-2"></i>
+                Initiatives en attente (@Model.PendingInitiatives)
+            </a>
+            <button class="btn btn-primary" onclick="refreshDashboard()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Actualiser
+            </button>
         </div>
     </div>
 
-    <!-- Contenu -->
-    <div class="row">
-        <!-- Derniers utilisateurs -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Derniers utilisateurs inscrits</h6>
-                    <a asp-action="Users" class="btn btn-sm btn-primary">Voir tout</a>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Nom</th>
-                                    <th>Email</th>
-                                    <th>Inscrit le</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var user in Model.RecentUsers)
-                                {
-                                    <tr>
-                                        <td>@user.FirstName @user.LastName</td>
-                                        <td>@user.Email</td>
-                                        <td>@user.CreatedAt.ToString("dd/MM/yyyy")</td>
-                                    </tr>
-                                }
-                                @if (!Model.RecentUsers.Any())
-                                {
-                                    <tr>
-                                        <td colspan="3" class="text-center">Aucun utilisateur trouvé</td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
+    <!-- Statistiques principales -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="glass-card p-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-primary bg-opacity-10 rounded p-3">
+                            <i class="bi bi-people text-primary fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Total Utilisateurs</h6>
+                        <h3 class="text-white mb-0">@Model.TotalUsers</h3>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Dernières initiatives -->
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">Dernières initiatives</h6>
-                    <a asp-controller="Initiative" asp-action="Index" class="btn btn-sm btn-primary">Voir tout</a>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="glass-card p-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <i class="bi bi-lightbulb text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Total Initiatives</h6>
+                        <h3 class="text-white mb-0">@Model.TotalInitiatives</h3>
+                    </div>
                 </div>
-                <div class="card-body">
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="glass-card p-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-info bg-opacity-10 rounded p-3">
+                            <i class="bi bi-chat-dots text-info fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Total Commentaires</h6>
+                        <h3 class="text-white mb-0">@Model.TotalComments</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="glass-card p-3">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded p-3">
+                            <i class="bi bi-hand-thumbs-up text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Total Votes</h6>
+                        <h3 class="text-white mb-0">@Model.TotalVotes</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistiques d'approbation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h5 class="text-white mb-3">Statistiques d'approbation</h5>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="glass-card p-3 border-warning">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-warning bg-opacity-10 rounded p-3">
+                            <i class="bi bi-clock text-warning fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">En attente</h6>
+                        <h3 class="text-white mb-0">@Model.PendingInitiatives</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="glass-card p-3 border-success">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-success bg-opacity-10 rounded p-3">
+                            <i class="bi bi-check-circle text-success fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Approuvées</h6>
+                        <h3 class="text-white mb-0">@Model.ApprovedInitiatives</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6 mb-3">
+            <div class="glass-card p-3 border-danger">
+                <div class="d-flex align-items-center">
+                    <div class="flex-shrink-0">
+                        <div class="bg-danger bg-opacity-10 rounded p-3">
+                            <i class="bi bi-x-circle text-danger fs-4"></i>
+                        </div>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <h6 class="text-white-50 mb-1">Rejetées</h6>
+                        <h3 class="text-white mb-0">@Model.RejectedInitiatives</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Taux d'approbation et croissance -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-3">
+            <div class="glass-card p-3">
+                <h6 class="text-white mb-3">Taux d'approbation</h6>
+                <div class="d-flex align-items-center mb-2">
+                    <div class="progress flex-grow-1 me-3" style="height: 25px;">
+                        <div class="progress-bar bg-success" role="progressbar" 
+                             style="width: @Model.ApprovalRate%" 
+                             aria-valuenow="@Model.ApprovalRate" aria-valuemin="0" aria-valuemax="100">
+                            @Model.ApprovalRate.ToString("F1")%
+                        </div>
+                    </div>
+                </div>
+                <small class="text-white-50">
+                    @Model.ApprovedInitiatives initiatives approuvées sur @Model.TotalInitiatives totales
+                </small>
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-3">
+            <div class="glass-card p-3">
+                <h6 class="text-white mb-3">Croissance mensuelle</h6>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <h4 class="text-white mb-0">@Model.InitiativesThisMonth</h4>
+                        <small class="text-white-50">Ce mois</small>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-white-50">
+                            <i class="bi bi-arrow-@(Model.MonthlyGrowthRate >= 0 ? "up" : "down")"></i>
+                            @Math.Abs(Model.MonthlyGrowthRate).ToString("F1")%
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <h4 class="text-white mb-0">@Model.InitiativesLastMonth</h4>
+                        <small class="text-white-50">Mois dernier</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Initiatives en attente -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="glass-card p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-white mb-0">Initiatives en attente d'approbation</h5>
+                    <a asp-area="Admin" asp-controller="Initiative" asp-action="Pending" class="btn btn-sm btn-outline-light">
+                        Voir tout <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                
+                @if (Model.PendingInitiativesList.Any())
+                {
                     <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
+                        <table class="table table-dark table-hover">
                             <thead>
                                 <tr>
                                     <th>Titre</th>
                                     <th>Auteur</th>
+                                    <th>Catégorie</th>
                                     <th>Date</th>
-                                    <th>Statut</th>
+                                    <th>Votes</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach (var initiative in Model.RecentInitiatives)
+                                @foreach (var initiative in Model.PendingInitiativesList.Take(5))
                                 {
                                     <tr>
-                                        <td>@initiative.Title</td>
-                                        <td>@initiative.User?.FirstName @initiative.User?.LastName</td>
-                                        <td>@initiative.CreatedAt.ToString("dd/MM/yyyy")</td>
                                         <td>
-                                            <span class="badge @GetStatusBadgeClass(initiative.Status)">@initiative.Status</span>
+                                            <a asp-area="Admin" asp-controller="Initiative" asp-action="Details" asp-route-id="@initiative.Id" class="text-white text-decoration-none">
+                                                @initiative.Title
+                                            </a>
                                         </td>
-                                    </tr>
-                                }
-                                @if (!Model.RecentInitiatives.Any())
-                                {
-                                    <tr>
-                                        <td colspan="4" class="text-center">Aucune initiative trouvée</td>
+                                        <td>@initiative.UserName</td>
+                                        <td>@initiative.CategoryName</td>
+                                        <td>@initiative.CreatedAt.ToString("dd/MM/yyyy")</td>
+                                        <td>@initiative.VotesCount</td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-success" onclick="approveInitiative(@initiative.Id)">
+                                                    <i class="bi bi-check"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-danger" onclick="rejectInitiative(@initiative.Id)">
+                                                    <i class="bi bi-x"></i>
+                                                </button>
+                                                <a asp-area="Admin" asp-controller="Initiative" asp-action="Details" asp-route-id="@initiative.Id" class="btn btn-info">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="text-center py-3">
+                        <i class="bi bi-check-circle text-success fs-1 mb-2"></i>
+                        <p class="text-white-50 mb-0">Aucune initiative en attente d'approbation</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Top initiatives et utilisateurs actifs -->
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="glass-card p-3">
+                <h5 class="text-white mb-3">Top initiatives (par votes)</h5>
+                @if (Model.TopVotedInitiatives.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var initiative in Model.TopVotedInitiatives)
+                        {
+                            <div class="list-group-item bg-transparent border-secondary text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@initiative.Title</h6>
+                                        <small class="text-white-50">par @initiative.UserName</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-warning">@initiative.VotesCount votes</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-white-50 text-center">Aucune initiative pour le moment</p>
+                }
+            </div>
+        </div>
+        
+        <div class="col-lg-6 mb-3">
+            <div class="glass-card p-3">
+                <h5 class="text-white mb-3">Utilisateurs les plus actifs</h5>
+                @if (Model.ActiveUsers != null && Model.ActiveUsers.Any())
+                {
+                    <div class="list-group list-group-flush">
+                        @foreach (var user in Model.ActiveUsers.Take(5))
+                        {
+                            <div class="list-group-item bg-transparent border-secondary text-white">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">@user.UserName</h6>
+                                        <small class="text-white-50">@user.Email</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-white-50">Score: @user.ActivityScore</small>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-white-50 text-center">Aucun utilisateur actif pour le moment</p>
+                }
             </div>
         </div>
     </div>
 </div>
 
-@functions {
-    string GetStatusBadgeClass(string status)
-    {
-        return status switch
-        {
-            "En attente" => "badge-warning",
-            "Approuvée" => "badge-success",
-            "En cours" => "badge-info",
-            "Terminée" => "badge-secondary",
-            "Rejetée" => "badge-danger",
-            _ => "badge-secondary"
-        };
-    }
-}
+<!-- Modal de rejet -->
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header border-secondary">
+                <h5 class="modal-title" id="rejectModalLabel">Rejeter l'initiative</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rejectForm">
+                    <input type="hidden" id="initiativeId" />
+                    <div class="mb-3">
+                        <label for="rejectionReason" class="form-label">Motif du rejet</label>
+                        <textarea class="form-control bg-dark text-white border-secondary" id="rejectionReason" rows="4" 
+                                  placeholder="Expliquez pourquoi cette initiative est rejetée..." required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer border-secondary">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" onclick="confirmReject()">Rejeter</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script>
-        // Scripts spécifiques à la page de tableau de bord
-        $(document).ready(function() {
-            // Initialisation des tooltips
-            $('[data-toggle="tooltip"]').tooltip();
-        });
+        function refreshDashboard() {
+            location.reload();
+        }
+
+        function approveInitiative(id) {
+            if (confirm('Êtes-vous sûr de vouloir approuver cette initiative ?')) {
+                fetch(`/Admin/Initiative/Approve/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Une erreur est survenue');
+                });
+            }
+        }
+
+        function rejectInitiative(id) {
+            document.getElementById('initiativeId').value = id;
+            document.getElementById('rejectionReason').value = '';
+            var modal = new bootstrap.Modal(document.getElementById('rejectModal'));
+            modal.show();
+        }
+
+        function confirmReject() {
+            const id = document.getElementById('initiativeId').value;
+            const reason = document.getElementById('rejectionReason').value;
+            
+            if (!reason.trim()) {
+                alert('Veuillez fournir un motif de rejet');
+                return;
+            }
+
+            fetch(`/Admin/Initiative/Reject/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+                    location.reload();
+                } else {
+                    alert(data.message || 'Une erreur est survenue');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Une erreur est survenue');
+            });
+        }
     </script>
 }

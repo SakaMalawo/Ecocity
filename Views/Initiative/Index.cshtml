@@ -1,176 +1,337 @@
 @model EcoCity.ViewModels.InitiativeIndexViewModel
 @{
-    ViewData["Title"] = "Initiatives - EcoCity";
+    ViewData["Title"] = "Fil d'actualités - EcoCity";
 }
 
 <div class="container py-5">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h1 class="display-5 fw-bold mb-3">Initiatives Écologiques</h1>
-                    <p class="lead text-muted">Découvrez et soutenez les projets pour un avenir durable</p>
-                </div>
-                <a href="@Url.Action("Create", "Initiative")" class="btn btn-success btn-lg">
-                    <i class="bi bi-plus-circle-fill me-2"></i>Proposer une initiative
-                </a>
-            </div>
-        </div>
+    <!-- Header avec filtres -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-white mb-3">Fil d'actualités des Initiatives</h1>
+        <p class="lead text-white-50 mb-4">Découvrez et soutenez tous les projets écologiques de la communauté</p>
+        <a href="@Url.Action("Create", "Initiative", new { area = "" })" class="btn btn-glass-eco btn-lg pulse-element">
+            <i class="bi bi-plus-circle me-2"></i>Proposer une initiative
+        </a>
     </div>
 
-    <!-- Filtres -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <form method="get" class="row g-3">
-                        <div class="col-md-4">
-                            <label for="search" class="form-label">Rechercher</label>
-                            <input type="text" class="form-control" id="search" name="search" placeholder="Mots-clés..." value="@ViewData["Search"]">
-                        </div>
-                        <div class="col-md-3">
-                            <label for="category" class="form-label">Catégorie</label>
-                            <select class="form-select" id="category" name="category">
-                                <option value="">Toutes les catégories</option>
-                                @foreach (var category in Model.Categories)
-                                {
-                                    <option value="@category.Id">@category.Name</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="sortBy" class="form-label">Trier par</label>
-                            <select class="form-select" id="sortBy" name="sortBy">
-                                <option value="recent">Plus récentes</option>
-                                <option value="popular">Plus populaires</option>
-                                <option value="votes">Plus de votes</option>
-                            </select>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="bi bi-search me-1"></i>Filtrer
-                            </button>
-                        </div>
-                    </form>
-                </div>
+    <!-- Filtres compactés -->
+    <div class="glass-card p-3 mb-4">
+        <form method="get" asp-area="" asp-controller="Initiative" asp-action="Index" class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="search" name="search" placeholder="Rechercher..." value="@ViewData["Search"]">
             </div>
-        </div>
+            <div class="col-md-3">
+                <select class="form-select" id="category" name="category">
+                    <option value="">Toutes les catégories</option>
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="sortBy" name="sortBy">
+                    <option value="recent">Plus récentes</option>
+                    <option value="popular">Plus populaires</option>
+                    <option value="votes">Plus de votes</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-glass w-100">
+                    <i class="bi bi-search me-1"></i>Filtrer
+                </button>
+            </div>
+        </form>
     </div>
 
-    <!-- Grille d'initiatives -->
-    <div class="row">
-        @if (Model.Initiatives != null && Model.Initiatives.Any())
-        {
-            @foreach (var initiative in Model.Initiatives)
+    <!-- Fil d'actualités des initiatives -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            @if (Model.Initiatives != null && Model.Initiatives.Any())
             {
-                <div class="col-lg-4 col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        @if (!string.IsNullOrEmpty(initiative.ImageUrl))
-                        {
-                            <img src="@initiative.ImageUrl" class="card-img-top" alt="@initiative.Title" style="height: 200px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="bi bi-image text-muted" style="font-size: 3rem;"></i>
+                @foreach (var initiative in Model.Initiatives)
+                {
+                    <div class="initiative-post mb-4 border border-secondary rounded p-3">
+                        <!-- En-tête du post -->
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="user-avatar-lg me-3">
+                                <img src="https://picsum.photos/seed/@(initiative.User?.UserName ?? "user")/50/50.jpg" 
+                                     alt="Avatar" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
                             </div>
-                        }
-                        <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <span class="badge bg-success">@initiative.Category?.Name</span>
-                                <div class="text-warning">
-                                    <i class="bi bi-star-fill"></i> @initiative.VotesCount
+                            <div class="flex-grow-1">
+                                <h6 class="text-white fw-bold mb-1">@(initiative.User?.UserName ?? "Utilisateur anonyme")</h6>
+                                <div class="d-flex align-items-center text-white-50 small">
+                                    <span class="category-pill me-2">@(initiative.Category?.Name ?? "Non catégorisée")</span>
+                                    <span><i class="bi bi-clock me-1"></i>@(initiative.CreatedAt.ToString("dd MMM yyyy à HH:mm"))</span>
                                 </div>
                             </div>
-                            <h5 class="card-title">@initiative.Title</h5>
-                            <p class="card-text text-muted flex-grow-1">
-                                @(initiative.Description?.Length > 120 ? initiative.Description.Substring(0, 120) + "..." : initiative.Description)
-                            </p>
-                            <div class="d-flex justify-content-between align-items-center mt-auto">
-                                <small class="text-muted">
-                                    <i class="bi bi-person-circle me-1"></i>@initiative.User?.UserName
-                                </small>
-                                <small class="text-muted">
-                                    <i class="bi bi-calendar me-1"></i>@initiative.CreatedAt.ToString("dd/MM/yyyy")
-                                </small>
+                            <div class="dropdown">
+                                <button class="btn btn-glass btn-sm" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-flag me-2"></i>Signaler</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="bi bi-bookmark me-2"></i>Sauvegarder</a></li>
+                                </ul>
                             </div>
                         </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                                <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-eye me-1"></i>Voir détails
-                                </a>
-                                <button class="btn btn-outline-success btn-sm" onclick="voteForInitiative(@initiative.Id)">
-                                    <i class="bi bi-hand-thumbs-up me-1"></i>Soutenir
+
+                        <!-- Contenu du post -->
+                        <div class="post-content">
+                            <h4 class="text-white fw-bold mb-3">@(initiative.Title ?? "Titre non défini")</h4>
+                            <p class="text-white-50 mb-3">@(initiative.Description ?? "Description non disponible")</p>
+                            
+                            @if (!string.IsNullOrEmpty(initiative.ImageUrl))
+                            {
+                                <div class="post-image mb-3">
+                                    <img src="@initiative.ImageUrl" class="img-fluid rounded" style="max-width: 400px; max-height: 300px; object-fit: cover; width: 100%;" alt="@(initiative.Title ?? "Image")">
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="post-image mb-3">
+                                    <div class="bg-gradient-primary d-flex align-items-center justify-content-center rounded" style="height: 200px;">
+                                        <i class="bi bi-image text-white fs-1 opacity-50"></i>
+                                    </div>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(initiative.Location))
+                            {
+                                <div class="location-info mb-3">
+                                    <i class="bi bi-geo-alt text-info me-2"></i>
+                                    <span class="text-white-50">@initiative.Location</span>
+                                </div>
+                            }
+                            
+                            @if (!string.IsNullOrEmpty(initiative.Goals))
+                            {
+                                <div class="goals-info mb-3">
+                                    <h6 class="text-white fw-bold mb-2"><i class="bi bi-target me-2"></i>Objectifs</h6>
+                                    <p class="text-white-50 small mb-0">@(initiative.Goals ?? "")</p>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Actions du post -->
+                        <div class="post-actions d-flex justify-content-between align-items-center pt-3 border-top border-secondary">
+                            <div class="action-buttons">
+                                <button class="btn btn-glass btn-sm me-2" onclick="voteForInitiative(@initiative.Id, true)">
+                                    <i class="bi bi-hand-thumbs-up me-1"></i>
+                                    <span class="vote-count">@(initiative.VotesCount)</span>
+                                </button>
+                                <button class="btn btn-glass btn-sm me-2" onclick="toggleComments(@initiative.Id)">
+                                    <i class="bi bi-chat me-1"></i>
+                                    <span class="comment-count">@(initiative.Comments?.Count ?? 0)</span>
+                                </button>
+                                <button class="btn btn-glass btn-sm me-2" onclick="shareInitiative(@initiative.Id)">
+                                    <i class="bi bi-share me-1"></i>
+                                    Partager
                                 </button>
                             </div>
+                            <div>
+                                <a href="@Url.Action("Details", "Initiative", new { id = initiative.Id })" 
+                                   class="btn btn-glass-eco btn-sm">
+                                    <i class="bi bi-arrow-right me-1"></i>Voir les détails
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Section commentaires (cachée par défaut) -->
+                        <div class="comments-section mt-3 pt-3 border-top border-secondary" id="comments-@initiative.Id" style="display: none;">
+                            <div class="comment-form mb-3">
+                                <div class="d-flex">
+                                    <img src="https://picsum.photos/seed/currentuser/40/40.jpg" 
+                                         alt="Your Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                    <div class="flex-grow-1">
+                                        <textarea class="form-control" placeholder="Ajoutez un commentaire..." rows="2"></textarea>
+                                        <button class="btn btn-glass-eco btn-sm mt-2">Commenter</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            @if (initiative.Comments?.Any() == true)
+                            {
+                                @foreach (var comment in initiative.Comments.Take(3))
+                                {
+                                    <div class="comment mb-2">
+                                        <div class="d-flex">
+                                            <img src="https://picsum.photos/seed/@(comment.User?.UserName ?? "commenter")/40/40.jpg" 
+                                                 alt="Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                            <div class="flex-grow-1">
+                                                <div class="d-flex justify-content-between">
+                                                    <h6 class="text-white fw-bold small mb-1">@comment.User?.UserName</h6>
+                                                    <small class="text-white-50">@comment.CreatedAt.ToString("dd MMM HH:mm")</small>
+                                                </div>
+                                                <p class="text-white-50 small mb-0">@comment.Content</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
                         </div>
                     </div>
-                </div>
+                }
             }
-        }
-        else
-        {
-            <div class="col-12">
-                <div class="text-center py-5">
-                    <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
-                    <h3 class="mt-3">Aucune initiative trouvée</h3>
-                    <p class="text-muted mb-4">Soyez le premier à proposer une initiative écologique !</p>
-                    <a href="@Url.Action("Create", "Initiative")" class="btn btn-success btn-lg">
-                        <i class="bi bi-plus-circle-fill me-2"></i>Créer une initiative
+            else
+            {
+                <div class="glass-card p-5 text-center">
+                    <i class="bi bi-lightbulb text-white fs-1 mb-3"></i>
+                    <h4 class="text-white mb-3">Aucune initiative trouvée</h4>
+                    <p class="text-white-50 mb-4">Aucune initiative ne correspond à vos critères de recherche.</p>
+                    <a href="@Url.Action("Create", "Initiative")" class="btn btn-glass-eco pulse-element">
+                        <i class="bi bi-plus-circle me-2"></i>Créer la première initiative
                     </a>
                 </div>
-            </div>
-        }
-    </div>
-
-    <!-- Pagination -->
-    @if (Model.Initiatives != null && Model.Initiatives.Count > 0)
-    {
-        <div class="row mt-4">
-            <div class="col-12">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Précédent</a>
-                        </li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Suivant</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+            }
         </div>
-    }
+    </div>
 </div>
 
-@section Scripts {
-    <script>
-        function voteForInitiative(initiativeId) {
-            // Implementation du vote via AJAX
-            fetch('/Initiative/Vote', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                },
-                body: JSON.stringify({ initiativeId: initiativeId })
+<!-- Scripts pour les interactions réseau social -->
+<script>
+    // Vote function
+    function voteForInitiative(initiativeId, isUpvote) {
+        const voteBtn = event.target.closest('.btn-glass');
+        
+        fetch('/Initiative/Vote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: JSON.stringify({
+                initiativeId: initiativeId,
+                isUpvote: isUpvote
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    location.reload();
-                } else {
-                    alert(data.message || 'Une erreur est survenue');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Une erreur est survenue lors du vote');
-            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                voteBtn.classList.add('voted');
+                voteBtn.innerHTML = '<i class="bi bi-hand-thumbs-up-fill me-1"></i><span class="vote-count">' + data.newVoteCount + '</span>';
+                
+                voteBtn.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    voteBtn.style.transform = 'scale(1)';
+                }, 200);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+    
+    // Toggle comments section
+    function toggleComments(initiativeId) {
+        const commentsSection = document.getElementById('comments-' + initiativeId);
+        const commentBtn = event.target.closest('.btn-glass');
+        
+        if (commentsSection.style.display === 'none') {
+            commentsSection.style.display = 'block';
+            commentBtn.innerHTML = '<i class="bi bi-chat-fill me-1"></i><span class="comment-count">' + 
+                commentsSection.querySelectorAll('.comment').length + '</span>';
+            
+            commentsSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+            commentsSection.style.display = 'none';
+            commentBtn.innerHTML = '<i class="bi bi-chat me-1"></i><span class="comment-count">' + 
+                commentsSection.querySelectorAll('.comment').length + '</span>';
         }
-    </script>
-}
+    }
+    
+    // Share initiative
+    function shareInitiative(initiativeId) {
+        const shareUrl = window.location.origin + '/Initiative/Details/' + initiativeId;
+        
+        if (navigator.share) {
+            navigator.share({
+                title: 'Découvrez cette initiative écologique',
+                text: 'Rejoignez-nous dans cette belle initiative pour un avenir durable !',
+                url: shareUrl
+            }).then(() => {
+                console.log('Shared successfully');
+            }).catch((error) => {
+                console.log('Error sharing:', error);
+                copyToClipboard(shareUrl);
+            });
+        } else {
+            copyToClipboard(shareUrl);
+        }
+    }
+    
+    function copyToClipboard(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        
+        try {
+            document.execCommand('copy');
+            showNotification('Lien copié dans le presse-papiers !', 'success');
+        } catch (err) {
+            console.error('Failed to copy text: ', err);
+            showNotification('Erreur lors de la copie du lien', 'error');
+        }
+        
+        document.body.removeChild(textarea);
+    }
+    
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+        notification.style.cssText = 'top: 100px; right: 20px; z-index: 9999; min-width: 300px;';
+        notification.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+    
+    // Handle comment submission
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.comment-form button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const textarea = this.parentElement.querySelector('textarea');
+                const commentText = textarea.value.trim();
+                
+                if (commentText) {
+                    const commentSection = this.closest('.comments-section');
+                    const commentsList = commentSection.querySelector('.comment-form').nextElementSibling;
+                    
+                    const newComment = document.createElement('div');
+                    newComment.className = 'comment mb-2';
+                    newComment.innerHTML = `
+                        <div class="d-flex">
+                            <img src="https://picsum.photos/seed/currentuser/40/40.jpg" 
+                                 alt="Your Avatar" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            <div class="flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <h6 class="text-white fw-bold small mb-1">Vous</h6>
+                                    <small class="text-white-50">À l'instant</small>
+                                </div>
+                                <p class="text-white-50 small mb-0">${commentText}</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    if (commentsList) {
+                        commentsList.insertBefore(newComment, commentsList.firstChild);
+                    } else {
+                        commentSection.appendChild(newComment);
+                    }
+                    
+                    textarea.value = '';
+                    showNotification('Commentaire ajouté avec succès !', 'success');
+                }
+            });
+        });
+    });
+</script>
