@@ -2,17 +2,17 @@
 
 /* Variables */
 :root {
-    --glass-bg: rgba(255, 255, 255, 0.1) !important;
-    --glass-bg-light: rgba(255, 255, 255, 0.15) !important;
-    --glass-bg-dark: rgba(255, 255, 255, 0.05) !important;
-    --glass-border: rgba(255, 255, 255, 0.2) !important;
-    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-    --glass-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+    --glass-bg: rgba(255, 255, 255, 0.08) !important;
+    --glass-bg-light: rgba(255, 255, 255, 0.12) !important;
+    --glass-bg-dark: rgba(255, 255, 255, 0.04) !important;
+    --glass-border: rgba(255, 255, 255, 0.15) !important;
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    --glass-shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* Background gradient */
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%) !important;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #1e3a8a 100%) !important;
     background-attachment: fixed !important;
     min-height: 100vh !important;
     margin: 0 !important;

@@ -1,0 +1,73 @@
+@model EcoCity.ViewModels.SettingsViewModel
+@{
+    ViewData["Title"] = "Paramètres - Espace Membre";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card p-5">
+                <h2 class="text-white fw-bold text-center mb-4">
+                    <i class="bi bi-gear me-2"></i> Paramètres
+                </h2>
+
+                @if (!string.IsNullOrEmpty(Model.StatusMessage))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        @Model.StatusMessage
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
+                <form method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="FirstName" class="form-label text-white fw-semibold"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="LastName" class="form-label text-white fw-semibold"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="UserName" class="form-label text-white fw-semibold"></label>
+                            <input asp-for="UserName" class="form-control" readonly />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Email" class="form-label text-white fw-semibold"></label>
+                            <input asp-for="Email" class="form-control" readonly />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label text-white fw-semibold"></label>
+                            <input asp-for="PhoneNumber" class="form-control" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check mt-4">
+                                <input asp-for="ReceiveEmailNotifications" class="form-check-input" />
+                                <label asp-for="ReceiveEmailNotifications" class="form-check-label text-white"></label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-glass-eco btn-lg">
+                            <i class="bi bi-check-circle me-2"></i> Enregistrer les paramètres
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

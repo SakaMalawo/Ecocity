@@ -1,4 +1,4 @@
-@model IEnumerable<Initiative>
+@model IEnumerable<EcoCity.Models.Initiative>
 @{
     ViewData["Title"] = "Initiatives Soutenues - Espace Membre";
 }
@@ -133,7 +133,7 @@
                                 </button>
                                 <button class="btn btn-glass btn-sm me-2" onclick="toggleComments(@initiative.Id)">
                                     <i class="bi bi-chat me-1"></i>
-                                    <span class="comment-count">@initiative.Comments.Count</span>
+                                    <span class="comment-count">@(initiative.Comments?.Count ?? 0)</span>
                                 </button>
                                 <button class="btn btn-glass btn-sm me-2" onclick="shareInitiative(@initiative.Id)">
                                     <i class="bi bi-share me-1"></i>

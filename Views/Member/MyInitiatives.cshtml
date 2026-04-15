@@ -169,7 +169,7 @@
                                 </button>
                                 <button class="btn btn-glass btn-sm me-2" disabled>
                                     <i class="bi bi-chat me-1"></i>
-                                    <span class="comment-count">@initiative.Comments.Count</span>
+                                    <span class="comment-count">@(initiative.Comments?.Count ?? 0)</span>
                                 </button>
                                 <button class="btn btn-glass btn-sm me-2" onclick="shareInitiative(@initiative.Id)">
                                     <i class="bi bi-share me-1"></i>
@@ -199,7 +199,7 @@
                                 </div>
                                 <div class="col-3">
                                     <div class="stat-item">
-                                        <h6 class="text-white fw-bold mb-1">@initiative.Comments.Count</h6>
+                                        <h6 class="text-white fw-bold mb-1">@(initiative.Comments?.Count ?? 0)</h6>
                                         <p class="text-white-50 small mb-0">Commentaires</p>
                                     </div>
                                 </div>
