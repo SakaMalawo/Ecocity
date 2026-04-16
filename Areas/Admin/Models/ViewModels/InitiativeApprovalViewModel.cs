@@ -17,6 +17,7 @@ namespace EcoCity.Areas.Admin.Models.ViewModels
         public int VotesCount { get; set; }
         public int CommentsCount { get; set; }
         public string Status { get; set; } = string.Empty;
+        public string Goals { get; set; } = string.Empty;
         public string RejectionReason { get; set; } = string.Empty;
         public int CategoryId { get; set; }
         public string UserId { get; set; } = string.Empty;

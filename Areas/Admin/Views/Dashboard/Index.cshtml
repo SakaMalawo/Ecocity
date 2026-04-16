@@ -12,7 +12,7 @@
             <p class="text-white-50 mb-0">Vue d'ensemble de la plateforme EcoCity</p>
         </div>
         <div class="d-flex gap-2">
-            <a asp-area="Admin" asp-controller="Initiative" asp-action="Pending" class="btn btn-warning">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="PendingInitiatives" class="btn btn-warning">
                 <i class="bi bi-clock-history me-2"></i>
                 Initiatives en attente (@Model.PendingInitiatives)
             </a>
@@ -192,7 +192,7 @@
             <div class="glass-card p-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h5 class="text-white mb-0">Initiatives en attente d'approbation</h5>
-                    <a asp-area="Admin" asp-controller="Initiative" asp-action="Pending" class="btn btn-sm btn-outline-light">
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="PendingInitiatives" class="btn btn-sm btn-outline-light">
                         Voir tout <i class="bi bi-arrow-right ms-1"></i>
                     </a>
                 </div>
@@ -216,7 +216,7 @@
                                 {
                                     <tr>
                                         <td>
-                                            <a asp-area="Admin" asp-controller="Initiative" asp-action="Details" asp-route-id="@initiative.Id" class="text-white text-decoration-none">
+                                            <a asp-area="Admin" asp-controller="Dashboard" asp-action="InitiativeDetails" asp-route-id="@initiative.Id" class="text-white text-decoration-none">
                                                 @initiative.Title
                                             </a>
                                         </td>
@@ -232,7 +232,7 @@
                                                 <button type="button" class="btn btn-danger" onclick="rejectInitiative(@initiative.Id)">
                                                     <i class="bi bi-x"></i>
                                                 </button>
-                                                <a asp-area="Admin" asp-controller="Initiative" asp-action="Details" asp-route-id="@initiative.Id" class="btn btn-info">
+                                                <a asp-area="Admin" asp-controller="Dashboard" asp-action="InitiativeDetails" asp-route-id="@initiative.Id" class="btn btn-info">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
                                             </div>
@@ -350,7 +350,7 @@
 
         function approveInitiative(id) {
             if (confirm('Êtes-vous sûr de vouloir approuver cette initiative ?')) {
-                fetch(`/Admin/Initiative/Approve/${id}`, {
+                fetch(`/admin/initiatives/approve/${id}`, {
                     method: 'POST',
                     headers: {
                         'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
@@ -387,13 +387,13 @@
                 return;
             }
 
-            fetch(`/Admin/Initiative/Reject/${id}`, {
+            fetch(`/admin/initiatives/reject/${id}`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/x-www-form-urlencoded',
                     'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
                 },
-                body: JSON.stringify({ reason: reason })
+                body: `reason=${encodeURIComponent(reason)}`
             })
             .then(response => response.json())
             .then(data => {

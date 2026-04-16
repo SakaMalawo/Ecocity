@@ -330,6 +330,7 @@ namespace EcoCity.Areas.Admin.Controllers
                 Id = initiative.Id,
                 Title = initiative.Title,
                 Description = initiative.Description,
+                Goals = initiative.Goals ?? string.Empty,
                 Location = initiative.Location,
                 ImageUrl = initiative.ImageUrl,
                 CreatedAt = initiative.CreatedAt,
@@ -342,9 +343,9 @@ namespace EcoCity.Areas.Admin.Controllers
                 UserName = initiative.User.UserName,
                 UserEmail = initiative.User.Email,
                 CommentsCount = initiative.Comments.Count,
-                RejectionReason = initiative.RejectionReason,
+                RejectionReason = initiative.RejectionReason ?? string.Empty,
                 ReviewedAt = initiative.UpdatedAt,
-                ReviewedBy = initiative.ReviewedBy
+                ReviewedBy = initiative.ReviewedBy ?? string.Empty
             };
 
             return View(model);

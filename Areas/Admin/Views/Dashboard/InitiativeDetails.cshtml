@@ -1,0 +1,248 @@
+@model EcoCity.Areas.Admin.Models.ViewModels.InitiativeApprovalViewModel
+@{
+    ViewData["Title"] = $"Détails - {Model.Title} - Admin EcoCity";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-white">Détails de l'initiative</h1>
+            <p class="text-white-50 mb-0">@Model.Title</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="PendingInitiatives" class="btn btn-outline-light">
+                <i class="bi bi-arrow-left me-2"></i>Retour
+            </a>
+            @if (Model.Status == "En attente")
+            {
+                <button onclick="approveInitiative(@Model.Id)" class="btn btn-success">
+                    <i class="bi bi-check-lg me-2"></i>Approuver
+                </button>
+                <button onclick="showRejectModal(@Model.Id, '@Model.Title')" class="btn btn-danger">
+                    <i class="bi bi-x-lg me-2"></i>Rejeter
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Colonne principale -->
+        <div class="col-lg-8">
+            <!-- Informations principales -->
+            <div class="glass-card mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge @(Model.Status == "Approuvée" ? "bg-success" : Model.Status == "Rejetée" ? "bg-danger" : "bg-warning text-dark") mb-2">
+                                @Model.Status
+                            </span>
+                            <h2 class="text-white mb-0">@Model.Title</h2>
+                        </div>
+                        <div class="text-center">
+                            <div class="display-4 text-white mb-0">@Model.VotesCount</div>
+                            <small class="text-white-50">votes</small>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <div class="mb-4">
+                            <img src="@Model.ImageUrl" alt="@Model.Title" class="img-fluid rounded" style="max-height: 300px; width: 100%; object-fit: cover;" />
+                        </div>
+                    }
+
+                    <div class="mb-4">
+                        <h5 class="text-white mb-2">Description</h5>
+                        <p class="text-white-75">@Model.Description</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.RejectionReason))
+                    {
+                        <div class="alert alert-danger">
+                            <h6><i class="bi bi-exclamation-triangle me-2"></i>Raison du rejet</h6>
+                            <p class="mb-0">@Model.RejectionReason</p>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Objectifs -->
+            @if (!string.IsNullOrEmpty(Model.Goals))
+            {
+                <div class="glass-card mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="text-white mb-3">Objectifs</h5>
+                        <p class="text-white-75">@Model.Goals</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Colonne latérale -->
+        <div class="col-lg-4">
+            <!-- Informations -->
+            <div class="glass-card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="text-white mb-3">Informations</h5>
+                    
+                    <div class="mb-3">
+                        <small class="text-white-50 d-block">Créée par</small>
+                        <span class="text-white">@Model.UserName</span>
+                        <small class="text-white-50 d-block">@Model.UserEmail</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-white-50 d-block">Catégorie</small>
+                        <span class="text-white">@Model.CategoryName</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-white-50 d-block">Localisation</small>
+                        <span class="text-white">@Model.Location</span>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-white-50 d-block">Date de création</small>
+                        <span class="text-white">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+
+                    @if (Model.TargetDate.HasValue)
+                    {
+                        <div class="mb-3">
+                            <small class="text-white-50 d-block">Date cible</small>
+                            <span class="text-white">@Model.TargetDate.Value.ToString("dd/MM/yyyy")</span>
+                        </div>
+                    }
+
+                    @if (Model.ReviewedAt.HasValue)
+                    {
+                        <div class="mb-3">
+                            <small class="text-white-50 d-block">Révisée le</small>
+                            <span class="text-white">@Model.ReviewedAt.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                        <div class="mb-3">
+                            <small class="text-white-50 d-block">Révisée par</small>
+                            <span class="text-white">@Model.ReviewedBy</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="glass-card mb-4">
+                <div class="card-body p-4">
+                    <h5 class="text-white mb-3">Statistiques</h5>
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="display-6 text-white mb-0">@Model.VotesCount</div>
+                            <small class="text-white-50">Votes</small>
+                        </div>
+                        <div class="col-6">
+                            <div class="display-6 text-white mb-0">@Model.CommentsCount</div>
+                            <small class="text-white-50">Commentaires</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de rejet -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white">Rejeter l'initiative</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white-75">Vous êtes sur le point de rejeter : <strong id="rejectInitiativeTitle" class="text-white"></strong></p>
+                <div class="mb-3">
+                    <label class="form-label text-white">Raison du rejet</label>
+                    <textarea id="rejectReason" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Indiquez la raison du rejet..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" onclick="confirmReject()" class="btn btn-danger">Confirmer le rejet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentInitiativeId = null;
+
+        function showRejectModal(id, title) {
+            currentInitiativeId = id;
+            document.getElementById('rejectInitiativeTitle').textContent = title;
+            document.getElementById('rejectReason').value = '';
+            new bootstrap.Modal(document.getElementById('rejectModal')).show();
+        }
+
+        async function confirmReject() {
+            const reason = document.getElementById('rejectReason').value;
+            if (!reason.trim()) {
+                alert('Veuillez indiquer une raison pour le rejet.');
+                return;
+            }
+
+            await rejectInitiative(currentInitiativeId, reason);
+            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+        }
+
+        async function approveInitiative(id) {
+            if (!confirm('Êtes-vous sûr de vouloir approuver cette initiative ?')) return;
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch(`/admin/initiatives/approve/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Initiative approuvée avec succès !');
+                    location.reload();
+                } else {
+                    alert('Erreur : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de l\'approbation.');
+            }
+        }
+
+        async function rejectInitiative(id, reason) {
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                const response = await fetch(`/admin/initiatives/reject/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token
+                    },
+                    body: `reason=${encodeURIComponent(reason)}`
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Initiative rejetée avec succès !');
+                    location.reload();
+                } else {
+                    alert('Erreur : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors du rejet.');
+            }
+        }
+    </script>
+}

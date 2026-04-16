@@ -131,20 +131,28 @@
                         </div>
                     }
 
+                    <!-- Validation Summary -->
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-custom alert-danger mb-4">
+                            <div asp-validation-summary="All" class="text-white"></div>
+                        </div>
+                    }
+
                     <!-- Formulaire de connexion -->
                     <form method="post">
                         @Html.AntiForgeryToken()
                         
                         <div class="mb-3">
                             <label for="Email" class="form-label text-white-custom fw-semibold">Email</label>
-                            <input asp-for="Email" class="form-control" id="Email" placeholder="admin@ecocity.com" required>
+                            <input type="email" name="Email" class="form-control" id="Email" placeholder="admin@ecocity.com" required>
                             <span asp-validation-for="Email" class="validation-error"></span>
                         </div>
 
                         <div class="mb-4">
                             <label for="Password" class="form-label text-white-custom fw-semibold">Mot de passe</label>
                             <div class="input-group">
-                                <input asp-for="Password" class="form-control" id="Password" type="password" placeholder="Votre mot de passe" required>
+                                <input type="password" name="Password" class="form-control" id="Password" placeholder="Votre mot de passe" required>
                                 <button class="btn btn-outline-light" type="button" onclick="togglePassword()">
                                     <i class="bi bi-eye" id="passwordToggle"></i>
                                 </button>
@@ -153,7 +161,7 @@
                         </div>
 
                         <div class="mb-3 form-check">
-                            <input asp-for="RememberMe" class="form-check-input" id="RememberMe">
+                            <input type="checkbox" name="RememberMe" class="form-check-input" id="RememberMe" value="true">
                             <label class="form-check-label text-white-custom" for="RememberMe">
                                 Se souvenir de moi
                             </label>

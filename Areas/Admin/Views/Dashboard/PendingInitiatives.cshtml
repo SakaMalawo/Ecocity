@@ -1,0 +1,190 @@
+@model IEnumerable<EcoCity.Areas.Admin.Models.ViewModels.InitiativeApprovalViewModel>
+@{
+    ViewData["Title"] = "Initiatives en attente - Admin EcoCity";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid py-4">
+    <!-- En-tête -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-white">Initiatives en attente</h1>
+            <p class="text-white-50 mb-0">Liste des initiatives nécessitant une approbation</p>
+        </div>
+        <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index" class="btn btn-outline-light">
+            <i class="bi bi-arrow-left me-2"></i>Retour au Dashboard
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="glass-card p-5 text-center">
+            <div class="mb-3">
+                <i class="bi bi-check-circle text-success fs-1"></i>
+            </div>
+            <h4 class="text-white mb-2">Aucune initiative en attente</h4>
+            <p class="text-white-50">Toutes les initiatives ont été traitées.</p>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var initiative in Model)
+            {
+                <div class="col-lg-6 col-xl-4 mb-4">
+                    <div class="glass-card h-100">
+                        <div class="card-body p-4">
+                            <!-- En-tête de l'initiative -->
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div class="flex-grow-1">
+                                    <h5 class="text-white mb-1">@initiative.Title</h5>
+                                    <small class="text-white-50">
+                                        <i class="bi bi-person me-1"></i>@initiative.UserName
+                                    </small>
+                                </div>
+                                <span class="badge bg-warning text-dark">En attente</span>
+                            </div>
+
+                            <!-- Description -->
+                            <p class="text-white-75 mb-3" style="min-height: 48px;">
+                                @(initiative.Description?.Length > 100 ? initiative.Description.Substring(0, 100) + "..." : initiative.Description)
+                            </p>
+
+                            <!-- Informations -->
+                            <div class="row text-center mb-3">
+                                <div class="col-4">
+                                    <div class="text-white-50 small">Catégorie</div>
+                                    <div class="text-white">@initiative.CategoryName</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-white-50 small">Votes</div>
+                                    <div class="text-white">@initiative.VotesCount</div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="text-white-50 small">Commentaires</div>
+                                    <div class="text-white">@initiative.CommentsCount</div>
+                                </div>
+                            </div>
+
+                            <!-- Date et lieu -->
+                            <div class="text-white-50 small mb-3">
+                                <div><i class="bi bi-geo-alt me-2"></i>@initiative.Location</div>
+                                <div class="mt-1"><i class="bi bi-calendar me-2"></i>Créée le @initiative.CreatedAt.ToString("dd/MM/yyyy")</div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="d-flex gap-2">
+                                <a asp-area="Admin" asp-controller="Dashboard" asp-action="InitiativeDetails" asp-route-id="@initiative.Id" class="btn btn-outline-light btn-sm flex-grow-1">
+                                    <i class="bi bi-eye me-1"></i>Détails
+                                </a>
+                                <button onclick="approveInitiative(@initiative.Id)" class="btn btn-success btn-sm flex-grow-1">
+                                    <i class="bi bi-check-lg me-1"></i>Approuver
+                                </button>
+                                <button onclick="showRejectModal(@initiative.Id, '@initiative.Title')" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+<!-- Modal de rejet -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content glass-card">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white">Rejeter l'initiative</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-white-75">Vous êtes sur le point de rejeter : <strong id="rejectInitiativeTitle" class="text-white"></strong></p>
+                <div class="mb-3">
+                    <label class="form-label text-white">Raison du rejet</label>
+                    <textarea id="rejectReason" class="form-control bg-dark text-white border-secondary" rows="3" placeholder="Indiquez la raison du rejet..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Annuler</button>
+                <button type="button" onclick="confirmReject()" class="btn btn-danger">Confirmer le rejet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentInitiativeId = null;
+
+        function showRejectModal(id, title) {
+            currentInitiativeId = id;
+            document.getElementById('rejectInitiativeTitle').textContent = title;
+            document.getElementById('rejectReason').value = '';
+            new bootstrap.Modal(document.getElementById('rejectModal')).show();
+        }
+
+        async function confirmReject() {
+            const reason = document.getElementById('rejectReason').value;
+            if (!reason.trim()) {
+                alert('Veuillez indiquer une raison pour le rejet.');
+                return;
+            }
+
+            await rejectInitiative(currentInitiativeId, reason);
+            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+        }
+
+        async function approveInitiative(id) {
+            if (!confirm('Êtes-vous sûr de vouloir approuver cette initiative ?')) return;
+
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch(`/admin/initiatives/approve/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token || ''
+                    }
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Initiative approuvée avec succès !');
+                    location.reload();
+                } else {
+                    alert('Erreur : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de l\'approbation.');
+            }
+        }
+
+        async function rejectInitiative(id, reason) {
+            try {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+                const response = await fetch(`/admin/initiatives/reject/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': token || ''
+                    },
+                    body: `reason=${encodeURIComponent(reason)}`
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    alert('Initiative rejetée avec succès !');
+                    location.reload();
+                } else {
+                    alert('Erreur : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors du rejet.');
+            }
+        }
+    </script>
+}

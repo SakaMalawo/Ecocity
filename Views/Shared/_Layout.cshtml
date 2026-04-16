@@ -100,16 +100,32 @@
                                     <span>@userName</span>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li>
-                                        <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Dashboard">
-                                            <i class="bi bi-speedometer2 me-2"></i> Espace Membre
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-area="" asp-controller="Initiative" asp-action="MyInitiatives">
-                                            <i class="bi bi-lightbulb me-2"></i> Mes initiatives
-                                        </a>
-                                    </li>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                                <i class="bi bi-shield-check me-2"></i> Dashboard Admin
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="Dashboard" asp-action="PendingInitiatives">
+                                                <i class="bi bi-clock-history me-2"></i> Initiatives en attente
+                                            </a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Member" asp-action="Dashboard">
+                                                <i class="bi bi-speedometer2 me-2"></i> Espace Membre
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="" asp-controller="Initiative" asp-action="MyInitiatives">
+                                                <i class="bi bi-lightbulb me-2"></i> Mes initiatives
+                                            </a>
+                                        </li>
+                                    }
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <form asp-area="" asp-controller="Account" asp-action="LogoutPost" method="post" style="display: inline;">
